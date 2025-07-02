@@ -1,0 +1,204 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --background: hsl(0, 0%, 100%);
+  --foreground: hsl(222, 84%, 4.9%);
+  --muted: hsl(210, 40%, 98%);
+  --muted-foreground: hsl(215.4, 16.3%, 46.9%);
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(222, 84%, 4.9%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(222, 84%, 4.9%);
+  --border: hsl(214.3, 31.8%, 91.4%);
+  --input: hsl(214.3, 31.8%, 91.4%);
+  --primary: hsl(198, 93%, 60%);
+  --primary-foreground: hsl(210, 40%, 98%);
+  --secondary: hsl(210, 40%, 96%);
+  --secondary-foreground: hsl(222.2, 84%, 4.9%);
+  --accent: hsl(210, 40%, 96%);
+  --accent-foreground: hsl(222.2, 84%, 4.9%);
+  --destructive: hsl(0, 84.2%, 60.2%);
+  --destructive-foreground: hsl(210, 40%, 98%);
+  --ring: hsl(198, 93%, 60%);
+  --radius: 0.75rem;
+
+  /* Joyville Theme Colors */
+  --mint-100: hsl(154, 44%, 96%);
+  --mint-200: hsl(154, 44%, 90%);
+  --mint-300: hsl(154, 44%, 80%);
+  --mint-400: hsl(154, 44%, 65%);
+  --mint-500: hsl(154, 44%, 50%);
+  --mint-600: hsl(154, 44%, 40%);
+
+  --sky-100: hsl(200, 100%, 96%);
+  --sky-200: hsl(200, 94%, 86%);
+  --sky-300: hsl(200, 94%, 76%);
+  --sky-400: hsl(200, 98%, 60%);
+  --sky-500: hsl(200, 98%, 54%);
+  --sky-600: hsl(200, 98%, 48%);
+
+  --sunny-100: hsl(54, 96%, 96%);
+  --sunny-200: hsl(54, 96%, 88%);
+  --sunny-300: hsl(54, 96%, 78%);
+  --sunny-400: hsl(54, 96%, 68%);
+  --sunny-500: hsl(54, 96%, 58%);
+  --sunny-600: hsl(54, 96%, 48%);
+
+  --lavender-100: hsl(270, 100%, 98%);
+  --lavender-200: hsl(269, 100%, 93%);
+  --lavender-300: hsl(269, 100%, 86%);
+  --lavender-400: hsl(270, 95%, 75%);
+  --lavender-500: hsl(270, 91%, 65%);
+  --lavender-600: hsl(270, 91%, 55%);
+
+  --coral: hsl(0, 70%, 67%);
+  --turquoise: hsl(188, 94%, 43%);
+  --sunny-orange: hsl(25, 95%, 61%);
+}
+
+.dark {
+  --background: hsl(222, 84%, 4.9%);
+  --foreground: hsl(210, 40%, 98%);
+  --muted: hsl(217.2, 32.6%, 17.5%);
+  --muted-foreground: hsl(215, 20.2%, 65.1%);
+  --popover: hsl(222, 84%, 4.9%);
+  --popover-foreground: hsl(210, 40%, 98%);
+  --card: hsl(222, 84%, 4.9%);
+  --card-foreground: hsl(210, 40%, 98%);
+  --border: hsl(217.2, 32.6%, 17.5%);
+  --input: hsl(217.2, 32.6%, 17.5%);
+  --primary: hsl(198, 93%, 60%);
+  --primary-foreground: hsl(222, 84%, 4.9%);
+  --secondary: hsl(217.2, 32.6%, 17.5%);
+  --secondary-foreground: hsl(210, 40%, 98%);
+  --accent: hsl(217.2, 32.6%, 17.5%);
+  --accent-foreground: hsl(210, 40%, 98%);
+  --destructive: hsl(0, 62.8%, 30.6%);
+  --destructive-foreground: hsl(0, 85.7%, 97.3%);
+  --ring: hsl(198, 93%, 60%);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-background text-foreground font-['Poppins'];
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-['Fredoka'];
+  }
+}
+
+@layer utilities {
+  .gradient-bg {
+    background: linear-gradient(135deg, var(--mint-100) 0%, var(--sky-100) 50%, var(--sunny-100) 100%);
+  }
+  
+  .toy-bounce {
+    transition: transform 0.3s ease;
+  }
+  
+  .toy-bounce:hover {
+    animation: bounce 0.6s ease-in-out;
+  }
+  
+  .card-hover {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .card-hover:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+  
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+  
+  .animate-wiggle {
+    animation: wiggle 1s ease-in-out infinite;
+  }
+  
+  .animate-bounce-gentle {
+    animation: bounce 1s infinite;
+  }
+  
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+  
+  @keyframes wiggle {
+    0%, 100% { transform: rotate(-3deg); }
+    50% { transform: rotate(3deg); }
+  }
+  
+  .bg-mint-100 { background-color: var(--mint-100); }
+  .bg-mint-200 { background-color: var(--mint-200); }
+  .bg-mint-300 { background-color: var(--mint-300); }
+  .bg-mint-400 { background-color: var(--mint-400); }
+  .bg-mint-500 { background-color: var(--mint-500); }
+  .bg-mint-600 { background-color: var(--mint-600); }
+  
+  .bg-sky-100 { background-color: var(--sky-100); }
+  .bg-sky-200 { background-color: var(--sky-200); }
+  .bg-sky-300 { background-color: var(--sky-300); }
+  .bg-sky-400 { background-color: var(--sky-400); }
+  .bg-sky-500 { background-color: var(--sky-500); }
+  .bg-sky-600 { background-color: var(--sky-600); }
+  
+  .bg-sunny-100 { background-color: var(--sunny-100); }
+  .bg-sunny-200 { background-color: var(--sunny-200); }
+  .bg-sunny-300 { background-color: var(--sunny-300); }
+  .bg-sunny-400 { background-color: var(--sunny-400); }
+  .bg-sunny-500 { background-color: var(--sunny-500); }
+  .bg-sunny-600 { background-color: var(--sunny-600); }
+  
+  .bg-lavender-100 { background-color: var(--lavender-100); }
+  .bg-lavender-200 { background-color: var(--lavender-200); }
+  .bg-lavender-300 { background-color: var(--lavender-300); }
+  .bg-lavender-400 { background-color: var(--lavender-400); }
+  .bg-lavender-500 { background-color: var(--lavender-500); }
+  .bg-lavender-600 { background-color: var(--lavender-600); }
+  
+  .bg-coral { background-color: var(--coral); }
+  .bg-turquoise { background-color: var(--turquoise); }
+  .bg-sunny-orange { background-color: var(--sunny-orange); }
+  
+  .text-mint-300 { color: var(--mint-300); }
+  .text-mint-500 { color: var(--mint-500); }
+  .text-mint-600 { color: var(--mint-600); }
+  
+  .text-sky-300 { color: var(--sky-300); }
+  .text-sky-500 { color: var(--sky-500); }
+  .text-sky-600 { color: var(--sky-600); }
+  
+  .text-sunny-300 { color: var(--sunny-300); }
+  .text-sunny-400 { color: var(--sunny-400); }
+  .text-sunny-500 { color: var(--sunny-500); }
+  .text-sunny-600 { color: var(--sunny-600); }
+  
+  .text-lavender-300 { color: var(--lavender-300); }
+  .text-lavender-500 { color: var(--lavender-500); }
+  .text-lavender-600 { color: var(--lavender-600); }
+  
+  .text-coral { color: var(--coral); }
+  .text-turquoise { color: var(--turquoise); }
+  .text-sunny-orange { color: var(--sunny-orange); }
+  
+  .hover\:bg-mint-400:hover { background-color: var(--mint-400); }
+  .hover\:bg-sky-400:hover { background-color: var(--sky-400); }
+  .hover\:bg-sunny-400:hover { background-color: var(--sunny-400); }
+  .hover\:bg-lavender-400:hover { background-color: var(--lavender-400); }
+  
+  .hover\:text-sunny-orange:hover { color: var(--sunny-orange); }
+  .hover\:text-mint-300:hover { color: var(--mint-300); }
+}

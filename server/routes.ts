@@ -1,0 +1,276 @@
+import type { Express } from "express";
+import { createServer, type Server } from "http";
+import { storage } from "./storage";
+import { insertUserSchema, insertProductSchema, insertCategorySchema, insertCartItemSchema } from "@shared/schema";
+import { z } from "zod";
+import bcrypt from "bcrypt";
+import session from "express-session";
+
+const loginSchema = z.object({
+  username: z.string().min(1),
+  password: z.string().min(1),
+});
+
+export async function registerRoutes(app: Express): Promise<Server> {
+  // Session configuration
+  app.use(session({
+    secret: process.env.SESSION_SECRET || "joyville-secret-key",
+    resave: false,
+    saveUninitialized: false,
+    cookie: { 
+      secure: false, // Set to true in production with HTTPS
+      maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    }
+  }));
+
+  // Initialize database with default data
+  await initializeDatabase();
+
+  // Auth middleware
+  const requireAuth = (req: any, res: any, next: any) => {
+    if (!req.session?.user || req.session.user.role !== "superadmin") {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    next();
+  };
+
+  // Authentication routes
+  app.post("/api/auth/login", async (req, res) => {
+    try {
+      const { username, password } = loginSchema.parse(req.body);
+      
+      const user = await storage.getUserByUsername(username);
+      if (!user) {
+        return res.status(401).json({ message: "Invalid credentials" });
+      }
+
+      const isValidPassword = await bcrypt.compare(password, user.password);
+      if (!isValidPassword) {
+        return res.status(401).json({ message: "Invalid credentials" });
+      }
+
+      req.session.user = { id: user.id, username: user.username, role: user.role };
+      res.json({ user: { id: user.id, username: user.username, role: user.role } });
+    } catch (error) {
+      res.status(400).json({ message: "Invalid request data" });
+    }
+  });
+
+  app.post("/api/auth/logout", (req, res) => {
+    req.session.destroy((err) => {
+      if (err) {
+        return res.status(500).json({ message: "Could not log out" });
+      }
+      res.json({ message: "Logged out successfully" });
+    });
+  });
+
+  app.get("/api/auth/me", (req, res) => {
+    if (req.session?.user) {
+      res.json({ user: req.session.user });
+    } else {
+      res.status(401).json({ message: "Not authenticated" });
+    }
+  });
+
+  // Categories routes
+  app.get("/api/categories", async (req, res) => {
+    try {
+      const categories = await storage.getCategories();
+      res.json(categories);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch categories" });
+    }
+  });
+
+  app.post("/api/categories", requireAuth, async (req, res) => {
+    try {
+      const category = insertCategorySchema.parse(req.body);
+      const newCategory = await storage.createCategory(category);
+      res.status(201).json(newCategory);
+    } catch (error) {
+      res.status(400).json({ message: "Invalid category data" });
+    }
+  });
+
+  // Products routes
+  app.get("/api/products", async (req, res) => {
+    try {
+      const section = req.query.section as string;
+      const category = req.query.category as string;
+      const search = req.query.search as string;
+
+      let products;
+      if (search) {
+        products = await storage.searchProducts(search, section);
+      } else if (category) {
+        products = await storage.getProductsByCategory(parseInt(category), section);
+      } else {
+        products = await storage.getProducts(section);
+      }
+
+      res.json(products);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch products" });
+    }
+  });
+
+  app.get("/api/products/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const product = await storage.getProduct(id);
+      if (!product) {
+        return res.status(404).json({ message: "Product not found" });
+      }
+      res.json(product);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch product" });
+    }
+  });
+
+  app.post("/api/products", requireAuth, async (req, res) => {
+    try {
+      const product = insertProductSchema.parse(req.body);
+      const newProduct = await storage.createProduct(product);
+      res.status(201).json(newProduct);
+    } catch (error) {
+      res.status(400).json({ message: "Invalid product data" });
+    }
+  });
+
+  app.put("/api/products/:id", requireAuth, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const updates = insertProductSchema.partial().parse(req.body);
+      const updatedProduct = await storage.updateProduct(id, updates);
+      if (!updatedProduct) {
+        return res.status(404).json({ message: "Product not found" });
+      }
+      res.json(updatedProduct);
+    } catch (error) {
+      res.status(400).json({ message: "Invalid product data" });
+    }
+  });
+
+  app.delete("/api/products/:id", requireAuth, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const deleted = await storage.deleteProduct(id);
+      if (!deleted) {
+        return res.status(404).json({ message: "Product not found" });
+      }
+      res.json({ message: "Product deleted successfully" });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to delete product" });
+    }
+  });
+
+  // Cart routes
+  app.get("/api/cart", async (req, res) => {
+    try {
+      const sessionId = req.sessionID;
+      const cartItems = await storage.getCartItems(sessionId);
+      res.json(cartItems);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch cart items" });
+    }
+  });
+
+  app.post("/api/cart", async (req, res) => {
+    try {
+      const sessionId = req.sessionID;
+      const cartItem = insertCartItemSchema.parse({
+        ...req.body,
+        sessionId,
+      });
+      const newItem = await storage.addToCart(cartItem);
+      res.status(201).json(newItem);
+    } catch (error) {
+      res.status(400).json({ message: "Invalid cart item data" });
+    }
+  });
+
+  app.put("/api/cart/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const { quantity } = z.object({ quantity: z.number().min(1) }).parse(req.body);
+      const updatedItem = await storage.updateCartItem(id, quantity);
+      if (!updatedItem) {
+        return res.status(404).json({ message: "Cart item not found" });
+      }
+      res.json(updatedItem);
+    } catch (error) {
+      res.status(400).json({ message: "Invalid request data" });
+    }
+  });
+
+  app.delete("/api/cart/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const deleted = await storage.removeFromCart(id);
+      if (!deleted) {
+        return res.status(404).json({ message: "Cart item not found" });
+      }
+      res.json({ message: "Item removed from cart" });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to remove item from cart" });
+    }
+  });
+
+  app.delete("/api/cart", async (req, res) => {
+    try {
+      const sessionId = req.sessionID;
+      await storage.clearCart(sessionId);
+      res.json({ message: "Cart cleared" });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to clear cart" });
+    }
+  });
+
+  // Dashboard routes
+  app.get("/api/dashboard/stats", requireAuth, async (req, res) => {
+    try {
+      const stats = await storage.getDashboardStats();
+      res.json(stats);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch dashboard stats" });
+    }
+  });
+
+  const httpServer = createServer(app);
+  return httpServer;
+}
+
+async function initializeDatabase() {
+  try {
+    // Create default superadmin user
+    const existingAdmin = await storage.getUserByUsername("admin");
+    if (!existingAdmin) {
+      const hashedPassword = await bcrypt.hash("admin123", 10);
+      await storage.createUser({
+        username: "admin",
+        password: hashedPassword,
+        role: "superadmin",
+      });
+    }
+
+    // Create default categories
+    const existingCategories = await storage.getCategories();
+    if (existingCategories.length === 0) {
+      const defaultCategories = [
+        { name: "Plush Toys", description: "Soft and cuddly companions", icon: "fas fa-baby", color: "mint" },
+        { name: "Building Blocks", description: "Creative construction sets", icon: "fas fa-cubes", color: "sky" },
+        { name: "Dolls", description: "Imaginative play companions", icon: "fas fa-female", color: "sunny" },
+        { name: "Educational", description: "Learning through play", icon: "fas fa-graduation-cap", color: "lavender" },
+        { name: "Vehicles", description: "Cars, trucks, and more", icon: "fas fa-car", color: "coral" },
+        { name: "Puzzles", description: "Brain-teasing challenges", icon: "fas fa-puzzle-piece", color: "turquoise" },
+      ];
+
+      for (const category of defaultCategories) {
+        await storage.createCategory(category);
+      }
+    }
+  } catch (error) {
+    console.error("Database initialization error:", error);
+  }
+}
