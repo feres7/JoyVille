@@ -1,0 +1,86 @@
+Build a full-stack web application for a toy-selling business with two separate sections: wholesale and retail, each managed by a Superadmin. The app must have a joyful, adorable design targeting kids and their parents, with a focus on usability and playfulness.
+
+🎯 Functional Requirements:
+
+User Roles:
+
+Superadmin (login required): Can add/remove items in both Wholesale and Retail sections. Each section has its own inventory (items are NOT shared).
+
+Inventory Management:
+
+Separate inventory systems for wholesale and retail toys.
+
+Admin dashboard with options to add, edit, or remove toys in each inventory.
+
+Homepage:
+
+Rotating hero carousel with high-quality toy images or short videos.
+
+Bright, playful headline (e.g., "Spark Joy with [Brand Name]").
+
+CTA buttons like "Shop Now" or "Explore Categories".
+
+Featured Categories:
+
+Icons or images of toy categories (e.g., Dolls, Plush Toys, Blocks).
+
+Clickable links to view products within that category.
+
+Product Showcases:
+
+New Arrivals and Bestsellers section with product image, name, and price.
+
+"New" or "Popular" tags on relevant products.
+
+Promotions:
+
+Banner or section for active discounts or offers.
+
+Brand Story Section:
+
+Short paragraph with mission and values.
+
+Friendly logo included.
+
+My Account (Optional):
+
+Login/Register for customers (basic functionality).
+
+View past orders and saved items.
+
+Footer:
+
+Links: About Us, Contact, FAQ, Shipping & Returns, Privacy Policy.
+
+🎨 Design Requirements:
+
+Color Palette: Pastel tones (soft pink, blue, green, yellow) with vibrant accents (sunny orange, coral, turquoise). No dark themes.
+
+Typography: Use a rounded display font for titles (like "Baloo", "Fredoka") and a clean sans-serif for body (like "Nunito" or "Poppins").
+
+Imagery: Cute, joyful toy photos and animated illustrations.
+
+Layout: Uncluttered, lots of white space, intuitive UX.
+
+Micro-interactions:
+
+Toys bounce slightly on hover.
+
+Success animations on checkout (confetti or sparkles).
+
+Accessibility: High contrast, keyboard support, alt text for images.
+
+🧱 Technical Stack (suggestion if needed):
+
+Frontend: React.ts
+
+Backend: Node.js with Express
+
+Database: SQLite
+
+Authentication: Superadmin login with basic auth or JWT
+
+CMS: Use Sanity or Strapi I want toy data easily editable
+
+Styling: TailwindCSS (with custom color theme based on the palette above) or styled-components
+
