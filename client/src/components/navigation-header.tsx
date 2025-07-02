@@ -64,7 +64,7 @@ export default function NavigationHeader() {
             {/* Admin Access */}
             {isLoggedIn && user?.role === "superadmin" ? (
               <Link href="/admin/dashboard">
-                <Button variant="outline" className="bg-lavender-300 hover:bg-lavender-400 text-gray-800 border-none">
+                <Button variant="outline" className="bg-purple-300 hover:bg-purple-400 text-gray-800 border-none">
                   <i className="fas fa-user-shield mr-1"></i>
                   Dashboard
                 </Button>
@@ -72,7 +72,7 @@ export default function NavigationHeader() {
             ) : (
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button variant="outline" className="bg-lavender-300 hover:bg-lavender-400 text-gray-800 border-none">
+                  <Button variant="outline" className="bg-purple-300 hover:bg-purple-400 text-gray-800 border-none">
                     <i className="fas fa-user-shield mr-1"></i>
                     Admin
                   </Button>

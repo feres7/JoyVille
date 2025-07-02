@@ -144,7 +144,7 @@ export type OrderItem = typeof orderItems.$inferSelect;
 export type InsertOrderItem = z.infer<typeof insertOrderItemSchema>;
 
 // Extended types for API responses
-export type ProductWithCategory = Product & { category?: Category };
+export type ProductWithCategory = Product & { category?: Category | null };
 export type CartItemWithProduct = CartItem & { product?: ProductWithCategory };
 export type OrderItemWithProduct = OrderItem & { product?: ProductWithCategory };
 export type OrderWithItems = Order & { orderItems?: OrderItemWithProduct[] };

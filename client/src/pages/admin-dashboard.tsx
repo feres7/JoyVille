@@ -126,7 +126,7 @@ export default function AdminDashboard() {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-lavender-100 to-sky-100">
+    <div className="min-h-screen bg-gradient-to-br from-purple-100 to-sky-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="bg-white rounded-2xl shadow-xl p-8">
           <div className="flex items-center justify-between mb-8">
@@ -185,14 +185,14 @@ export default function AdminDashboard() {
               </CardContent>
             </Card>
             
-            <Card className="bg-lavender-100">
+            <Card className="bg-purple-100">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-lavender-600 font-medium">Revenue</p>
+                    <p className="text-purple-600 font-medium">Revenue</p>
                     <p className="text-2xl font-bold text-gray-800">${stats?.revenue || "0"}</p>
                   </div>
-                  <i className="fas fa-dollar-sign text-lavender-500 text-2xl"></i>
+                  <i className="fas fa-dollar-sign text-purple-500 text-2xl"></i>
                 </div>
               </CardContent>
             </Card>

@@ -20,7 +20,7 @@ The application follows a modern full-stack architecture:
 ### Frontend Architecture
 - **React Router**: wouter for client-side routing
 - **UI Framework**: shadcn/ui components with custom Joyville theme
-- **Styling**: Tailwind CSS with custom color variables (mint, sky, sunny, lavender, coral, turquoise)
+- **Styling**: Tailwind CSS with custom color variables (mint, sky, sunny, purple, coral, turquoise)
 - **Forms**: React Hook Form with Zod validation
 - **API Client**: Custom fetch wrapper with TanStack Query
 

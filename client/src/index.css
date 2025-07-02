@@ -1,8 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap');
 
 :root {
   --background: hsl(0, 0%, 100%);
@@ -26,7 +26,7 @@
   --ring: hsl(198, 93%, 60%);
   --radius: 0.75rem;
 
-  /* Joyville Theme Colors */
+  /* Joyville Theme Colors - Gender Inclusive */
   --mint-100: hsl(154, 44%, 96%);
   --mint-200: hsl(154, 44%, 90%);
   --mint-300: hsl(154, 44%, 80%);
@@ -48,12 +48,12 @@
   --sunny-500: hsl(54, 96%, 58%);
   --sunny-600: hsl(54, 96%, 48%);
 
-  --lavender-100: hsl(270, 100%, 98%);
-  --lavender-200: hsl(269, 100%, 93%);
-  --lavender-300: hsl(269, 100%, 86%);
-  --lavender-400: hsl(270, 95%, 75%);
-  --lavender-500: hsl(270, 91%, 65%);
-  --lavender-600: hsl(270, 91%, 55%);
+  --purple-100: hsl(250, 50%, 96%);
+  --purple-200: hsl(250, 50%, 90%);
+  --purple-300: hsl(250, 50%, 80%);
+  --purple-400: hsl(250, 50%, 70%);
+  --purple-500: hsl(250, 50%, 60%);
+  --purple-600: hsl(250, 50%, 50%);
 
   --coral: hsl(0, 70%, 67%);
   --turquoise: hsl(188, 94%, 43%);
@@ -162,12 +162,12 @@
   .bg-sunny-500 { background-color: var(--sunny-500); }
   .bg-sunny-600 { background-color: var(--sunny-600); }
   
-  .bg-lavender-100 { background-color: var(--lavender-100); }
-  .bg-lavender-200 { background-color: var(--lavender-200); }
-  .bg-lavender-300 { background-color: var(--lavender-300); }
-  .bg-lavender-400 { background-color: var(--lavender-400); }
-  .bg-lavender-500 { background-color: var(--lavender-500); }
-  .bg-lavender-600 { background-color: var(--lavender-600); }
+  .bg-purple-100 { background-color: var(--purple-100); }
+  .bg-purple-200 { background-color: var(--purple-200); }
+  .bg-purple-300 { background-color: var(--purple-300); }
+  .bg-purple-400 { background-color: var(--purple-400); }
+  .bg-purple-500 { background-color: var(--purple-500); }
+  .bg-purple-600 { background-color: var(--purple-600); }
   
   .bg-coral { background-color: var(--coral); }
   .bg-turquoise { background-color: var(--turquoise); }
@@ -186,9 +186,9 @@
   .text-sunny-500 { color: var(--sunny-500); }
   .text-sunny-600 { color: var(--sunny-600); }
   
-  .text-lavender-300 { color: var(--lavender-300); }
-  .text-lavender-500 { color: var(--lavender-500); }
-  .text-lavender-600 { color: var(--lavender-600); }
+  .text-purple-300 { color: var(--purple-300); }
+  .text-purple-500 { color: var(--purple-500); }
+  .text-purple-600 { color: var(--purple-600); }
   
   .text-coral { color: var(--coral); }
   .text-turquoise { color: var(--turquoise); }
@@ -197,7 +197,7 @@
   .hover\:bg-mint-400:hover { background-color: var(--mint-400); }
   .hover\:bg-sky-400:hover { background-color: var(--sky-400); }
   .hover\:bg-sunny-400:hover { background-color: var(--sunny-400); }
-  .hover\:bg-lavender-400:hover { background-color: var(--lavender-400); }
+  .hover\:bg-purple-400:hover { background-color: var(--purple-400); }
   
   .hover\:text-sunny-orange:hover { color: var(--sunny-orange); }
   .hover\:text-mint-300:hover { color: var(--mint-300); }

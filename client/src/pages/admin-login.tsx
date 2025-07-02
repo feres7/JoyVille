@@ -52,7 +52,7 @@ export default function AdminLogin() {
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader className="text-center">
-        <div className="w-16 h-16 bg-gradient-to-br from-lavender-300 to-sky-300 rounded-full flex items-center justify-center mx-auto mb-4">
+        <div className="w-16 h-16 bg-gradient-to-br from-purple-300 to-sky-300 rounded-full flex items-center justify-center mx-auto mb-4">
           <i className="fas fa-user-shield text-white text-2xl"></i>
         </div>
         <CardTitle className="text-2xl font-bold">Admin Login</CardTitle>
@@ -84,7 +84,7 @@ export default function AdminLogin() {
           </div>
           <Button
             type="submit"
-            className="w-full bg-lavender-400 hover:bg-lavender-500 text-white"
+            className="w-full bg-purple-400 hover:bg-purple-500 text-white"
             disabled={loginMutation.isPending}
           >
             {loginMutation.isPending ? "Signing in..." : "Sign In"}

@@ -38,7 +38,7 @@ export default function FeaturedCategories() {
       mint: "from-mint-100 to-mint-200 bg-mint-300 text-mint-600",
       sky: "from-sky-100 to-sky-200 bg-sky-300 text-sky-600",
       sunny: "from-sunny-100 to-sunny-200 bg-sunny-300 text-sunny-600",
-      lavender: "from-lavender-100 to-lavender-200 bg-lavender-300 text-lavender-600",
+      purple: "from-purple-100 to-purple-200 bg-purple-300 text-purple-600",
       coral: "from-coral/20 to-coral/30 bg-coral/40 text-coral",
       turquoise: "from-turquoise/20 to-turquoise/30 bg-turquoise/40 text-turquoise",
     };

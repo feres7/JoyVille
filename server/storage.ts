@@ -104,7 +104,7 @@ export class DatabaseStorage implements IStorage {
       ))
       .orderBy(desc(products.createdAt));
 
-    return await query;
+    return await query as ProductWithCategory[];
   }
 
   async getProduct(id: number): Promise<ProductWithCategory | undefined> {
@@ -134,11 +134,11 @@ export class DatabaseStorage implements IStorage {
       .leftJoin(categories, eq(products.categoryId, categories.id))
       .where(eq(products.id, id));
 
-    return product || undefined;
+    return product as ProductWithCategory || undefined;
   }
 
   async getProductsByCategory(categoryId: number, section?: string): Promise<ProductWithCategory[]> {
-    return await db
+    const query = await db
       .select({
         id: products.id,
         name: products.name,
@@ -168,6 +168,8 @@ export class DatabaseStorage implements IStorage {
         section ? eq(products.section, section) : undefined
       ))
       .orderBy(desc(products.createdAt));
+    
+    return query as ProductWithCategory[];
   }
 
   async createProduct(product: InsertProduct): Promise<Product> {
@@ -227,7 +229,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getCartItems(sessionId: string): Promise<CartItemWithProduct[]> {
-    return await db
+    const query = await db
       .select({
         id: cartItems.id,
         sessionId: cartItems.sessionId,
@@ -260,6 +262,8 @@ export class DatabaseStorage implements IStorage {
       .leftJoin(products, eq(cartItems.productId, products.id))
       .leftJoin(categories, eq(products.categoryId, categories.id))
       .where(eq(cartItems.sessionId, sessionId));
+    
+    return query as CartItemWithProduct[];
   }
 
   async addToCart(item: InsertCartItem): Promise<CartItem> {
@@ -276,7 +280,7 @@ export class DatabaseStorage implements IStorage {
       // Update quantity
       const [updatedItem] = await db
         .update(cartItems)
-        .set({ quantity: existingItem.quantity + item.quantity })
+        .set({ quantity: (existingItem.quantity || 0) + (item.quantity || 0) })
         .where(eq(cartItems.id, existingItem.id))
         .returning();
       return updatedItem;
