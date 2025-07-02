@@ -1,7 +1,5 @@
-import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { useQuery } from "@tanstack/react-query";
@@ -10,7 +8,6 @@ import AdminLogin from "@/pages/admin-login";
 
 export default function NavigationHeader() {
   const [location] = useLocation();
-  const [searchQuery, setSearchQuery] = useState("");
   const { user, isLoggedIn } = useAuth();
 
   const { data: cartItems = [] } = useQuery({
@@ -49,18 +46,6 @@ export default function NavigationHeader() {
           
           {/* Actions */}
           <div className="flex items-center space-x-4">
-            {/* Search */}
-            <div className="hidden sm:block relative">
-              <Input
-                type="text"
-                placeholder="Search toys..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 pr-4 py-2 border border-gray-300 rounded-full focus:ring-2 focus:ring-mint-300 focus:border-transparent"
-              />
-              <i className="fas fa-search absolute left-3 top-3 text-gray-400"></i>
-            </div>
-            
             {/* Admin Access */}
             {isLoggedIn && user?.role === "superadmin" ? (
               <Link href="/admin/dashboard">

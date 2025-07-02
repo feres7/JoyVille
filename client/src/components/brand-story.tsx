@@ -1,5 +1,3 @@
-import { Button } from "@/components/ui/button";
-
 export default function BrandStory() {
   return (
     <section id="about" className="py-16 bg-white">
@@ -43,9 +41,7 @@ export default function BrandStory() {
               </div>
             </div>
             
-            <Button className="bg-gradient-to-r from-sunny-orange to-coral text-white px-8 py-3 rounded-full font-semibold transition-all transform hover:scale-105 shadow-lg">
-              Learn More About Us
-            </Button>
+
           </div>
           
           <div className="relative">
