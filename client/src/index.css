@@ -87,6 +87,10 @@
     @apply border-border;
   }
   
+  html {
+    scroll-behavior: smooth;
+  }
+  
   body {
     @apply bg-background text-foreground font-['Poppins'];
     font-feature-settings: "rlig" 1, "calt" 1;
@@ -94,6 +98,15 @@
   
   h1, h2, h3, h4, h5, h6 {
     @apply font-['Fredoka'];
+  }
+  
+  /* Add scroll offset to account for header */
+  #categories {
+    scroll-margin-top: 100px;
+  }
+  
+  #about {
+    scroll-margin-top: 100px;
   }
 }
 
