@@ -40,8 +40,7 @@ export default function NavigationHeader() {
             <Link href="/wholesale" className={`font-medium transition-colors ${location === "/wholesale" ? "text-sunny-orange" : "text-gray-700 hover:text-sunny-orange"}`}>
               Wholesale
             </Link>
-            <a href="#categories" className="text-gray-700 hover:text-sunny-orange font-medium transition-colors">Categories</a>
-            <a href="#about" className="text-gray-700 hover:text-sunny-orange font-medium transition-colors">About</a>
+
           </nav>
           
           {/* Actions */}

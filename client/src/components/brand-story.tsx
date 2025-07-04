@@ -46,25 +46,12 @@ export default function BrandStory() {
           
           <div className="relative">
             <img 
-              src="https://pixabay.com/get/g08faa7206a90a562790ac062e26803a60386df846fbb8b6c7ce09aa43ee2f3171847463c78263a804fd8ade649f92d6ee9fdcebca662c97a097a9f44088e575e_1280.jpg" 
+              src="https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600" 
               alt="Children happily playing with educational toys in a bright, cheerful environment" 
               className="rounded-2xl shadow-2xl w-full h-auto" 
             />
             
-            {/* Floating testimonial */}
-            <div className="absolute -bottom-6 -left-6 bg-white rounded-2xl shadow-xl p-4 max-w-xs animate-float">
-              <div className="flex items-center mb-2">
-                <div className="flex text-sunny-400">
-                  <i className="fas fa-star"></i>
-                  <i className="fas fa-star"></i>
-                  <i className="fas fa-star"></i>
-                  <i className="fas fa-star"></i>
-                  <i className="fas fa-star"></i>
-                </div>
-              </div>
-              <p className="text-sm text-gray-600 mb-2">"My kids absolutely love their Joyville toys! Quality is amazing."</p>
-              <p className="text-xs text-gray-500 font-medium">- Sarah M., Happy Parent</p>
-            </div>
+
           </div>
         </div>
       </div>

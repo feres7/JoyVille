@@ -28,6 +28,22 @@ export default function HeroCarousel() {
                 </Button>
               </Link>
             </div>
+            
+            {/* Navigation buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mt-6">
+              <a href="#categories">
+                <Button variant="outline" className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-300 px-6 py-3 rounded-full font-semibold transition-all transform hover:scale-105">
+                  <i className="fas fa-th-large mr-2"></i>
+                  Check Our Categories
+                </Button>
+              </a>
+              <a href="#about">
+                <Button variant="outline" className="bg-purple-100 hover:bg-purple-200 text-purple-700 border-purple-300 px-6 py-3 rounded-full font-semibold transition-all transform hover:scale-105">
+                  <i className="fas fa-info-circle mr-2"></i>
+                  Learn More About Us
+                </Button>
+              </a>
+            </div>
           </div>
           
           <div className="relative">
@@ -42,8 +58,8 @@ export default function HeroCarousel() {
             <div className="absolute -top-4 -right-4 w-16 h-16 bg-sunny-300 rounded-full flex items-center justify-center animate-bounce-gentle">
               <i className="fas fa-star text-sunny-orange text-xl"></i>
             </div>
-            <div className="absolute -bottom-4 -left-4 w-12 h-12 bg-lavender-300 rounded-full flex items-center justify-center animate-wiggle">
-              <i className="fas fa-heart text-lavender-500 text-lg"></i>
+            <div className="absolute -bottom-4 -left-4 w-12 h-12 bg-purple-300 rounded-full flex items-center justify-center animate-wiggle">
+              <i className="fas fa-heart text-purple-500 text-lg"></i>
             </div>
           </div>
         </div>
