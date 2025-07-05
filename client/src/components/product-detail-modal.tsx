@@ -2,12 +2,13 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, CarouselApi } from "@/components/ui/carousel";
 import { ShoppingCart, Star, Package, Tag } from "lucide-react";
 import { ProductWithCategory } from "@shared/schema";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { useState, useEffect } from "react";
 
 interface ProductDetailModalProps {
   product: ProductWithCategory;
@@ -17,6 +18,22 @@ interface ProductDetailModalProps {
 export default function ProductDetailModal({ product, children }: ProductDetailModalProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [api, setApi] = useState<CarouselApi>();
+  const [current, setCurrent] = useState(0);
+  const [count, setCount] = useState(0);
+  
+  useEffect(() => {
+    if (!api) {
+      return;
+    }
+    
+    setCount(api.scrollSnapList().length);
+    setCurrent(api.selectedScrollSnap() + 1);
+    
+    api.on("select", () => {
+      setCurrent(api.selectedScrollSnap() + 1);
+    });
+  }, [api]);
   
   const addToCartMutation = useMutation({
     mutationFn: async () => {
@@ -58,7 +75,7 @@ export default function ProductDetailModal({ product, children }: ProductDetailM
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Image Carousel */}
           <div className="space-y-4">
-            <Carousel className="w-full">
+            <Carousel setApi={setApi} className="w-full">
               <CarouselContent>
                 {images.map((imageUrl, index) => (
                   <CarouselItem key={index}>
@@ -78,11 +95,18 @@ export default function ProductDetailModal({ product, children }: ProductDetailM
               </CarouselContent>
               {images.length > 1 && (
                 <>
-                  <CarouselPrevious />
-                  <CarouselNext />
+                  <CarouselPrevious className="left-4" />
+                  <CarouselNext className="right-4" />
                 </>
               )}
             </Carousel>
+            
+            {/* Image Counter */}
+            {images.length > 1 && (
+              <div className="text-center text-sm text-gray-500">
+                {current} of {count}
+              </div>
+            )}
             
             {/* Thumbnail Navigation */}
             {images.length > 1 && (
@@ -92,7 +116,12 @@ export default function ProductDetailModal({ product, children }: ProductDetailM
                     key={index}
                     src={imageUrl}
                     alt={`${product.name} thumbnail ${index + 1}`}
-                    className="w-16 h-16 object-cover rounded-lg border-2 border-gray-200 hover:border-mint-400 cursor-pointer transition-colors"
+                    className={`w-16 h-16 object-cover rounded-lg border-2 cursor-pointer transition-colors ${
+                      current === index + 1 
+                        ? "border-mint-400 ring-2 ring-mint-200" 
+                        : "border-gray-200 hover:border-mint-400"
+                    }`}
+                    onClick={() => api?.scrollTo(index)}
                   />
                 ))}
               </div>
