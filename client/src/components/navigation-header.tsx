@@ -7,6 +7,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import UserAuthDialog from "@/components/user-auth-dialog";
+import CartDropdown from "@/components/cart-dropdown";
 
 export default function NavigationHeader() {
   const [location] = useLocation();
@@ -14,12 +15,7 @@ export default function NavigationHeader() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const { data: cartItems = [] } = useQuery({
-    queryKey: ["/api/cart"],
-    enabled: true,
-  });
 
-  const cartItemCount = Array.isArray(cartItems) ? cartItems.reduce((total: number, item: any) => total + item.quantity, 0) : 0;
 
   const logoutMutation = useMutation({
     mutationFn: async () => {
@@ -107,14 +103,7 @@ export default function NavigationHeader() {
             )}
             
             {/* Cart */}
-            <Button variant="outline" className="relative bg-mint-300 hover:bg-mint-400 text-gray-800 border-none p-2">
-              <i className="fas fa-shopping-cart"></i>
-              {cartItemCount > 0 && (
-                <Badge className="absolute -top-2 -right-2 bg-coral text-white text-xs min-w-[20px] h-5 rounded-full flex items-center justify-center">
-                  {cartItemCount}
-                </Badge>
-              )}
-            </Button>
+            <CartDropdown />
             
             {/* Mobile Menu */}
             <Button variant="ghost" className="md:hidden p-2">
