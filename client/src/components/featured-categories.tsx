@@ -45,6 +45,7 @@ export default function FeaturedCategories() {
       coral: { bg: "bg-coral/30", text: "text-coral", iconBg: "bg-coral/40" },
       turquoise: { bg: "bg-turquoise/30", text: "text-turquoise", iconBg: "bg-turquoise/40" },
       red: { bg: "bg-red-200", text: "text-red-700", iconBg: "bg-red-300" },
+      brown: { bg: "bg-amber-200", text: "text-amber-800", iconBg: "bg-amber-300" },
     };
     return colorMap[color] || { bg: "bg-gray-200", text: "text-gray-700", iconBg: "bg-gray-300" };
   };
