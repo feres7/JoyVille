@@ -103,7 +103,7 @@ export default function AdminDashboard() {
                         Edit
                       </Button>
                     </DialogTrigger>
-                    <DialogContent className="max-w-2xl">
+                    <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                       <AdminProductFormEnhanced product={product} />
                     </DialogContent>
                   </Dialog>
@@ -206,7 +206,7 @@ export default function AdminDashboard() {
                   <i className="fas fa-plus mr-2"></i>Add Retail Product
                 </Button>
               </DialogTrigger>
-              <DialogContent className="max-w-2xl">
+              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                 <AdminProductFormEnhanced defaultSection="retail" />
               </DialogContent>
             </Dialog>
@@ -217,7 +217,7 @@ export default function AdminDashboard() {
                   <i className="fas fa-plus mr-2"></i>Add Wholesale Product
                 </Button>
               </DialogTrigger>
-              <DialogContent className="max-w-2xl">
+              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                 <AdminProductFormEnhanced defaultSection="wholesale" />
               </DialogContent>
             </Dialog>
