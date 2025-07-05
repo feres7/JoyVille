@@ -1,11 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
+import { useLocation } from "wouter";
 import type { Category } from "@shared/schema";
 
 export default function FeaturedCategories() {
   const { data: categories = [], isLoading } = useQuery<Category[]>({
     queryKey: ["/api/categories"],
   });
+  const [, setLocation] = useLocation();
 
   if (isLoading) {
     return (
@@ -34,15 +36,19 @@ export default function FeaturedCategories() {
   }
 
   const getColorClasses = (color: string) => {
-    const colorMap: Record<string, string> = {
-      mint: "from-mint-100 to-mint-200 bg-mint-300 text-mint-600",
-      sky: "from-sky-100 to-sky-200 bg-sky-300 text-sky-600",
-      sunny: "from-sunny-100 to-sunny-200 bg-sunny-300 text-sunny-600",
-      purple: "from-purple-100 to-purple-200 bg-purple-300 text-purple-600",
-      coral: "from-coral/20 to-coral/30 bg-coral/40 text-coral",
-      turquoise: "from-turquoise/20 to-turquoise/30 bg-turquoise/40 text-turquoise",
+    const colorMap: Record<string, { bg: string; text: string; iconBg: string }> = {
+      mint: { bg: "bg-mint-200", text: "text-mint-700", iconBg: "bg-mint-300" },
+      sky: { bg: "bg-sky-200", text: "text-sky-700", iconBg: "bg-sky-300" },
+      sunny: { bg: "bg-sunny-200", text: "text-sunny-700", iconBg: "bg-sunny-300" },
+      purple: { bg: "bg-purple-200", text: "text-purple-700", iconBg: "bg-purple-300" },
+      coral: { bg: "bg-coral/30", text: "text-coral", iconBg: "bg-coral/40" },
+      turquoise: { bg: "bg-turquoise/30", text: "text-turquoise", iconBg: "bg-turquoise/40" },
     };
-    return colorMap[color] || "from-gray-100 to-gray-200 bg-gray-300 text-gray-600";
+    return colorMap[color] || { bg: "bg-gray-200", text: "text-gray-700", iconBg: "bg-gray-300" };
+  };
+
+  const handleCategoryClick = (categoryId: number) => {
+    setLocation(`/retail?category=${categoryId}`);
   };
 
   return (
@@ -60,18 +66,18 @@ export default function FeaturedCategories() {
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
           {categories.map((category) => {
             const colorClasses = getColorClasses(category.color);
-            const [gradientClasses, iconBgClass, iconColorClass] = colorClasses.split(' bg-');
             
             return (
               <Card 
                 key={category.id} 
-                className={`card-hover toy-bounce bg-gradient-to-br ${gradientClasses} rounded-2xl p-6 text-center cursor-pointer border-none`}
+                className={`card-hover toy-bounce ${colorClasses.bg} rounded-2xl p-6 text-center cursor-pointer border-none transition-all duration-300 hover:scale-105`}
+                onClick={() => handleCategoryClick(category.id)}
               >
-                <div className={`w-16 h-16 mx-auto mb-4 bg-${iconBgClass} rounded-full flex items-center justify-center`}>
-                  <i className={`${category.icon} text-2xl ${iconColorClass}`}></i>
+                <div className={`w-16 h-16 mx-auto mb-4 ${colorClasses.iconBg} rounded-full flex items-center justify-center`}>
+                  <i className={`${category.icon} text-2xl ${colorClasses.text}`}></i>
                 </div>
-                <h3 className="font-semibold text-gray-800 mb-2">{category.name}</h3>
-                <p className="text-sm text-gray-600">View Category</p>
+                <h3 className={`font-semibold mb-2 ${colorClasses.text}`}>{category.name}</h3>
+                <p className={`text-sm ${colorClasses.text} opacity-70`}>View Category</p>
               </Card>
             );
           })}
