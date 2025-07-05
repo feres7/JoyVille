@@ -41,6 +41,7 @@ export default function FeaturedCategories() {
       sky: { bg: "bg-sky-200", text: "text-sky-700", iconBg: "bg-sky-300" },
       sunny: { bg: "bg-sunny-200", text: "text-sunny-700", iconBg: "bg-sunny-300" },
       purple: { bg: "bg-purple-200", text: "text-purple-700", iconBg: "bg-purple-300" },
+      lavender: { bg: "bg-purple-200", text: "text-purple-700", iconBg: "bg-purple-300" },
       coral: { bg: "bg-coral/30", text: "text-coral", iconBg: "bg-coral/40" },
       turquoise: { bg: "bg-turquoise/30", text: "text-turquoise", iconBg: "bg-turquoise/40" },
     };
