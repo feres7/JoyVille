@@ -116,7 +116,20 @@ export default function CartDropdown() {
                           >
                             <Minus className="h-3 w-3" />
                           </Button>
-                          <span className="text-sm font-medium">{item.quantity}</span>
+                          <Input
+                            type="number"
+                            min="1"
+                            max="99"
+                            value={item.quantity}
+                            onChange={(e) => {
+                              const newQuantity = parseInt(e.target.value) || 1;
+                              if (newQuantity > 0 && newQuantity <= 99) {
+                                handleUpdateQuantity(item.id, newQuantity);
+                              }
+                            }}
+                            className="w-12 h-6 text-center text-sm p-0 border-gray-300"
+                            disabled={updateCartMutation.isPending}
+                          />
                           <Button
                             variant="outline"
                             size="sm"
