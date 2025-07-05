@@ -1,21 +1,38 @@
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { useQuery } from "@tanstack/react-query";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
-import AdminLogin from "@/pages/admin-login";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
+import UserAuthDialog from "@/components/user-auth-dialog";
 
 export default function NavigationHeader() {
   const [location] = useLocation();
   const { user, isLoggedIn } = useAuth();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const { data: cartItems = [] } = useQuery({
     queryKey: ["/api/cart"],
     enabled: true,
   });
 
-  const cartItemCount = cartItems.reduce((total: number, item: any) => total + item.quantity, 0);
+  const cartItemCount = Array.isArray(cartItems) ? cartItems.reduce((total: number, item: any) => total + item.quantity, 0) : 0;
+
+  const logoutMutation = useMutation({
+    mutationFn: async () => {
+      return await apiRequest("/api/auth/logout", "POST", {});
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
+      toast({
+        title: "Goodbye!",
+        description: "You have been logged out successfully.",
+      });
+    },
+  });
 
   return (
     <header className="bg-white shadow-lg sticky top-0 z-50">
@@ -45,26 +62,48 @@ export default function NavigationHeader() {
           
           {/* Actions */}
           <div className="flex items-center space-x-4">
-            {/* Admin Access */}
-            {isLoggedIn && user?.role === "superadmin" ? (
-              <Link href="/admin/dashboard">
-                <Button variant="outline" className="bg-purple-300 hover:bg-purple-400 text-gray-800 border-none">
-                  <i className="fas fa-user-shield mr-1"></i>
-                  Dashboard
-                </Button>
-              </Link>
-            ) : (
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button variant="outline" className="bg-purple-300 hover:bg-purple-400 text-gray-800 border-none">
-                    <i className="fas fa-user-shield mr-1"></i>
-                    Admin
+            {/* User Authentication */}
+            {isLoggedIn ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="bg-mint-300 hover:bg-mint-400 text-gray-800 border-none">
+                    <i className="fas fa-user mr-2"></i>
+                    {user?.username || "User"}
                   </Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-md">
-                  <AdminLogin />
-                </DialogContent>
-              </Dialog>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-48">
+                  <DropdownMenuItem>
+                    <i className="fas fa-user mr-2"></i>
+                    My Profile
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <i className="fas fa-box mr-2"></i>
+                    My Orders
+                  </DropdownMenuItem>
+                  {user?.role === "superadmin" && (
+                    <DropdownMenuItem asChild>
+                      <Link href="/admin/dashboard">
+                        <i className="fas fa-user-shield mr-2"></i>
+                        Admin Dashboard
+                      </Link>
+                    </DropdownMenuItem>
+                  )}
+                  <DropdownMenuItem 
+                    onClick={() => logoutMutation.mutate()}
+                    className="text-red-600 hover:text-red-800"
+                  >
+                    <i className="fas fa-sign-out-alt mr-2"></i>
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <UserAuthDialog>
+                <Button variant="outline" className="bg-sky-300 hover:bg-sky-400 text-gray-800 border-none">
+                  <i className="fas fa-user mr-2"></i>
+                  Login / Sign Up
+                </Button>
+              </UserAuthDialog>
             )}
             
             {/* Cart */}

@@ -56,6 +56,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.post("/api/auth/register", async (req, res) => {
+    try {
+      const { username, password } = loginSchema.parse(req.body);
+      
+      // Check if user already exists
+      const existingUser = await storage.getUserByUsername(username);
+      if (existingUser) {
+        return res.status(400).json({ message: "Username already exists" });
+      }
+
+      // Hash password
+      const hashedPassword = await bcrypt.hash(password, 10);
+      
+      // Create new user
+      const newUser = await storage.createUser({
+        username,
+        password: hashedPassword,
+        role: "customer"
+      });
+
+      // Set session
+      req.session.user = { id: newUser.id, username: newUser.username, role: newUser.role };
+      res.status(201).json({ user: { id: newUser.id, username: newUser.username, role: newUser.role } });
+    } catch (error) {
+      res.status(400).json({ message: "Invalid request data" });
+    }
+  });
+
   app.post("/api/auth/logout", (req, res) => {
     req.session.destroy((err) => {
       if (err) {
