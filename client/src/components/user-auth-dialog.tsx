@@ -12,11 +12,12 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 
 const loginSchema = z.object({
-  username: z.string().min(1, "Username is required"),
+  email: z.string().email("Please enter a valid email address"),
   password: z.string().min(1, "Password is required"),
 });
 
 const signupSchema = z.object({
+  email: z.string().email("Please enter a valid email address"),
   username: z.string().min(3, "Username must be at least 3 characters"),
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
@@ -37,7 +38,7 @@ export default function UserAuthDialog({ children }: UserAuthDialogProps) {
   const loginForm = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      username: "",
+      email: "",
       password: "",
     },
   });
@@ -45,6 +46,7 @@ export default function UserAuthDialog({ children }: UserAuthDialogProps) {
   const signupForm = useForm<SignupFormData>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
+      email: "",
       username: "",
       password: "",
     },
@@ -130,13 +132,14 @@ export default function UserAuthDialog({ children }: UserAuthDialogProps) {
               <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="space-y-4">
                 <FormField
                   control={loginForm.control}
-                  name="username"
+                  name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Username</FormLabel>
+                      <FormLabel>Email</FormLabel>
                       <FormControl>
                         <Input 
-                          placeholder="Enter your username" 
+                          type="email"
+                          placeholder="Enter your email" 
                           {...field}
                           className="rounded-full border-2 focus:ring-2 focus:ring-mint-300"
                         />
@@ -187,6 +190,24 @@ export default function UserAuthDialog({ children }: UserAuthDialogProps) {
           <TabsContent value="signup" className="space-y-4 mt-6">
             <Form {...signupForm}>
               <form onSubmit={signupForm.handleSubmit(onSignupSubmit)} className="space-y-4">
+                <FormField
+                  control={signupForm.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="email"
+                          placeholder="Enter your email address" 
+                          {...field}
+                          className="rounded-full border-2 focus:ring-2 focus:ring-sky-300"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 <FormField
                   control={signupForm.control}
                   name="username"

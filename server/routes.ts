@@ -18,8 +18,14 @@ declare module "express-session" {
 }
 
 const loginSchema = z.object({
-  username: z.string().min(1),
+  email: z.string().email(),
   password: z.string().min(1),
+});
+
+const signupSchema = z.object({
+  email: z.string().email(),
+  username: z.string().min(1),
+  password: z.string().min(6),
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -48,9 +54,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Authentication routes
   app.post("/api/auth/login", async (req, res) => {
     try {
-      const { username, password } = loginSchema.parse(req.body);
+      const { email, password } = loginSchema.parse(req.body);
       
-      const user = await storage.getUserByUsername(username);
+      const user = await storage.getUserByEmail(email);
       if (!user) {
         return res.status(401).json({ message: "Invalid credentials" });
       }
@@ -69,11 +75,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/auth/register", async (req, res) => {
     try {
-      const { username, password } = loginSchema.parse(req.body);
+      const { email, username, password } = signupSchema.parse(req.body);
       
       // Check if user already exists
-      const existingUser = await storage.getUserByUsername(username);
-      if (existingUser) {
+      const existingUserByEmail = await storage.getUserByEmail(email);
+      if (existingUserByEmail) {
+        return res.status(400).json({ message: "Email already exists" });
+      }
+
+      const existingUserByUsername = await storage.getUserByUsername(username);
+      if (existingUserByUsername) {
         return res.status(400).json({ message: "Username already exists" });
       }
 
@@ -82,6 +93,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Create new user
       const newUser = await storage.createUser({
+        email,
         username,
         password: hashedPassword,
         role: "customer"
@@ -292,6 +304,7 @@ async function initializeDatabase() {
     if (!existingAdmin) {
       const hashedPassword = await bcrypt.hash("admin123", 10);
       await storage.createUser({
+        email: "admin@joyville.com",
         username: "admin",
         password: hashedPassword,
         role: "superadmin",

@@ -5,6 +5,7 @@ import { z } from "zod";
 
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
+  email: text("email").notNull().unique(),
   username: text("username").notNull().unique(),
   password: text("password").notNull(),
   role: text("role").notNull().default("customer"), // "superadmin", "customer"
@@ -96,9 +97,12 @@ export const orderItemsRelations = relations(orderItems, ({ one }) => ({
 
 // Schemas
 export const insertUserSchema = createInsertSchema(users).pick({
+  email: true,
   username: true,
   password: true,
   role: true,
+}).extend({
+  email: z.string().email("Please enter a valid email address"),
 });
 
 export const insertCategorySchema = createInsertSchema(categories).omit({
