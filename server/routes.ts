@@ -33,7 +33,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use(session({
     secret: process.env.SESSION_SECRET || "joyville-secret-key",
     resave: false,
-    saveUninitialized: false,
+    saveUninitialized: true, // Allow sessions for anonymous users (cart functionality)
     cookie: { 
       secure: false, // Set to true in production with HTTPS
       maxAge: 24 * 60 * 60 * 1000 // 24 hours
