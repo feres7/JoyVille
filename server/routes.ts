@@ -6,6 +6,17 @@ import { z } from "zod";
 import bcrypt from "bcrypt";
 import session from "express-session";
 
+// Extend session type to include user
+declare module "express-session" {
+  interface SessionData {
+    user?: {
+      id: number;
+      username: string;
+      role: string;
+    };
+  }
+}
+
 const loginSchema = z.object({
   username: z.string().min(1),
   password: z.string().min(1),
@@ -99,6 +110,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } else {
       res.status(401).json({ message: "Not authenticated" });
     }
+  });
+
+  // Remove old admin route - redirect to login
+  app.get("/api/auth/admin", (req, res) => {
+    res.status(404).json({ message: "Route not found. Please use /api/auth/login instead." });
   });
 
   // Categories routes

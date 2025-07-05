@@ -18,7 +18,7 @@ export default function AdminDashboard() {
   const queryClient = useQueryClient();
 
   if (!isLoggedIn || user?.role !== "superadmin") {
-    setLocation("/admin/login");
+    setLocation("/");
     return null;
   }
 
