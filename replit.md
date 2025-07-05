@@ -61,6 +61,7 @@ The application follows a modern full-stack architecture:
 
 ## Changelog
 
+- July 05, 2025. Added comprehensive checkout system with customer address forms
 - July 02, 2025. Initial setup
 
 ## User Preferences

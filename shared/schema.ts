@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, decimal, timestamp, uuid } from "drizzle-orm/pg-core";
+import { pgTable, text, varchar, serial, integer, boolean, decimal, timestamp, uuid } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
@@ -48,6 +48,24 @@ export const orders = pgTable("orders", {
   sessionId: text("session_id").notNull(),
   totalAmount: decimal("total_amount", { precision: 10, scale: 2 }).notNull(),
   status: text("status").notNull().default("pending"), // "pending", "confirmed", "shipped", "delivered"
+  // Customer Information
+  customerName: varchar("customer_name", { length: 255 }).notNull(),
+  customerEmail: varchar("customer_email", { length: 255 }).notNull(),
+  customerPhone: varchar("customer_phone", { length: 50 }),
+  // Shipping Address
+  shippingAddress: varchar("shipping_address", { length: 500 }).notNull(),
+  shippingCity: varchar("shipping_city", { length: 100 }).notNull(),
+  shippingState: varchar("shipping_state", { length: 100 }).notNull(),
+  shippingCountry: varchar("shipping_country", { length: 100 }).notNull(),
+  shippingZipCode: varchar("shipping_zip_code", { length: 20 }).notNull(),
+  // Billing Address (optional - can be same as shipping)
+  billingAddress: varchar("billing_address", { length: 500 }),
+  billingCity: varchar("billing_city", { length: 100 }),
+  billingState: varchar("billing_state", { length: 100 }),
+  billingCountry: varchar("billing_country", { length: 100 }),
+  billingZipCode: varchar("billing_zip_code", { length: 20 }),
+  // Additional Information
+  orderNotes: text("order_notes"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

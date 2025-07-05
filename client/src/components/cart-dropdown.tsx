@@ -6,12 +6,14 @@ import { Input } from "@/components/ui/input";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { useLocation } from "wouter";
 import { Minus, Plus, Trash2 } from "lucide-react";
 import type { CartItemWithProduct } from "@shared/schema";
 
 export default function CartDropdown() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [, navigate] = useLocation();
 
   const { data: cartItems = [] } = useQuery<CartItemWithProduct[]>({
     queryKey: ["/api/cart"],
@@ -166,7 +168,10 @@ export default function CartDropdown() {
                 <span className="font-semibold">Total:</span>
                 <span className="text-lg font-bold text-sunny-orange">${cartTotal.toFixed(2)}</span>
               </div>
-              <Button className="w-full bg-mint-300 hover:bg-mint-400 text-gray-800">
+              <Button 
+                onClick={() => navigate("/checkout")}
+                className="w-full bg-mint-300 hover:bg-mint-400 text-gray-800"
+              >
                 <i className="fas fa-credit-card mr-2"></i>
                 Checkout
               </Button>
