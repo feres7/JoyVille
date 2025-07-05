@@ -138,7 +138,7 @@ export default function ProductDetailModal({ product, children }: ProductDetailM
                 {product.section && (
                   <Badge variant="outline" className={
                     product.section === "retail" 
-                      ? "border-mint-400 bg-mint-100 text-mint-800 hover:bg-mint-200" 
+                      ? "border-orange-400 bg-orange-100 text-orange-800 hover:bg-orange-200" 
                       : "border-sky-400 bg-sky-100 text-sky-800 hover:bg-sky-200"
                   }>
                     {product.section.charAt(0).toUpperCase() + product.section.slice(1)}
