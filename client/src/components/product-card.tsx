@@ -53,7 +53,7 @@ export default function ProductCard({ product, badge }: ProductCardProps) {
       )}
       
       <img 
-        src={product.imageUrl || "https://images.unsplash.com/photo-1558060370-d644479cb6f7?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300"} 
+        src={product.imageUrls?.[0] || "https://images.unsplash.com/photo-1558060370-d644479cb6f7?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300"} 
         alt={product.name} 
         className="w-full h-48 object-cover" 
       />

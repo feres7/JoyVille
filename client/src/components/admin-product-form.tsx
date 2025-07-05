@@ -12,13 +12,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import { X, Upload, Plus } from "lucide-react";
 import type { ProductWithCategory, Category } from "@shared/schema";
 
 const productSchema = z.object({
   name: z.string().min(1, "Product name is required"),
   description: z.string().optional(),
   price: z.string().min(1, "Price is required"),
-  imageUrl: z.string().url("Must be a valid URL").optional().or(z.literal("")),
+  imageUrls: z.array(z.string().url("Must be a valid URL")).optional(),
   categoryId: z.string().min(1, "Category is required"),
   inventory: z.string().min(1, "Inventory is required"),
   section: z.enum(["retail", "wholesale"]),
@@ -36,6 +37,8 @@ interface AdminProductFormProps {
 export default function AdminProductForm({ product, defaultSection = "retail" }: AdminProductFormProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [imageUrls, setImageUrls] = useState<string[]>(product?.imageUrls || []);
+  const [newImageUrl, setNewImageUrl] = useState("");
 
   const { data: categories = [] } = useQuery<Category[]>({
     queryKey: ["/api/categories"],
@@ -47,10 +50,10 @@ export default function AdminProductForm({ product, defaultSection = "retail" }:
       name: product?.name || "",
       description: product?.description || "",
       price: product?.price || "",
-      imageUrl: product?.imageUrl || "",
+      imageUrls: product?.imageUrls || [],
       categoryId: product?.categoryId?.toString() || "",
       inventory: product?.inventory?.toString() || "0",
-      section: product?.section || defaultSection,
+      section: (product?.section as "retail" | "wholesale") || defaultSection,
       isNew: product?.isNew || false,
       isBestseller: product?.isBestseller || false,
     },

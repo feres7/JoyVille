@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import AdminProductForm from "@/components/admin-product-form";
+import AdminProductFormEnhanced from "@/components/admin-product-form-enhanced";
 import type { ProductWithCategory } from "@shared/schema";
 import { useLocation } from "wouter";
 
@@ -81,7 +81,7 @@ export default function AdminDashboard() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">
                   <img
-                    src={product.imageUrl || "https://images.unsplash.com/photo-1558060370-d644479cb6f7?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=100"}
+                    src={product.imageUrls?.[0] || "https://images.unsplash.com/photo-1558060370-d644479cb6f7?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=100"}
                     alt={product.name}
                     className="w-16 h-16 object-cover rounded-lg"
                   />
@@ -104,7 +104,7 @@ export default function AdminDashboard() {
                       </Button>
                     </DialogTrigger>
                     <DialogContent className="max-w-2xl">
-                      <AdminProductForm product={product} />
+                      <AdminProductFormEnhanced product={product} />
                     </DialogContent>
                   </Dialog>
                   <Button
@@ -207,7 +207,7 @@ export default function AdminDashboard() {
                 </Button>
               </DialogTrigger>
               <DialogContent className="max-w-2xl">
-                <AdminProductForm defaultSection="retail" />
+                <AdminProductFormEnhanced defaultSection="retail" />
               </DialogContent>
             </Dialog>
             
@@ -218,7 +218,7 @@ export default function AdminDashboard() {
                 </Button>
               </DialogTrigger>
               <DialogContent className="max-w-2xl">
-                <AdminProductForm defaultSection="wholesale" />
+                <AdminProductFormEnhanced defaultSection="wholesale" />
               </DialogContent>
             </Dialog>
           </div>

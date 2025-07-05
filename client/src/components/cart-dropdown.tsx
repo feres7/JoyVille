@@ -98,7 +98,7 @@ export default function CartDropdown() {
                 <div key={item.id} className="p-4 border-b">
                   <div className="flex items-start space-x-3">
                     <img 
-                      src={item.product?.imageUrl || "https://images.unsplash.com/photo-1558060370-d644479cb6f7?w=80"} 
+                      src={item.product?.imageUrls?.[0] || "https://images.unsplash.com/photo-1558060370-d644479cb6f7?w=80"} 
                       alt={item.product?.name || "Product"} 
                       className="w-16 h-16 object-cover rounded-lg"
                     />

@@ -25,7 +25,7 @@ export const products = pgTable("products", {
   name: text("name").notNull(),
   description: text("description"),
   price: decimal("price", { precision: 10, scale: 2 }).notNull(),
-  imageUrl: text("image_url"),
+  imageUrls: text("image_urls").array(),
   categoryId: integer("category_id").references(() => categories.id),
   inventory: integer("inventory").notNull().default(0),
   section: text("section").notNull(), // "retail" or "wholesale"
@@ -112,6 +112,8 @@ export const insertCategorySchema = createInsertSchema(categories).omit({
 export const insertProductSchema = createInsertSchema(products).omit({
   id: true,
   createdAt: true,
+}).extend({
+  imageUrls: z.array(z.string().url()).optional(),
 });
 
 export const insertCartItemSchema = createInsertSchema(cartItems).omit({
