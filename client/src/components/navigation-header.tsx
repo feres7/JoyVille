@@ -72,9 +72,11 @@ export default function NavigationHeader() {
                     <i className="fas fa-user mr-2"></i>
                     My Profile
                   </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <i className="fas fa-box mr-2"></i>
-                    My Orders
+                  <DropdownMenuItem asChild>
+                    <Link href="/orders">
+                      <i className="fas fa-clipboard-list mr-2"></i>
+                      {user?.role === "superadmin" ? "Orders" : "My Orders"}
+                    </Link>
                   </DropdownMenuItem>
                   {user?.role === "superadmin" && (
                     <DropdownMenuItem asChild>

@@ -346,7 +346,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/orders", requireCustomerAuth, async (req, res) => {
     try {
-      const orders = await storage.getOrders();
+      const userId = req.session?.user?.id;
+      const userRole = req.session?.user?.role;
+      
+      // Admins see all orders, customers see only their own
+      const orders = userRole === "superadmin" 
+        ? await storage.getOrders()
+        : await storage.getOrdersByUser(userId!);
+      
       res.json(orders);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch orders" });
