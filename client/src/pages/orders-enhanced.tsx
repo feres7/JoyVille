@@ -35,10 +35,11 @@ export default function OrdersEnhanced() {
         description: "Order status updated successfully",
       });
     },
-    onError: () => {
+    onError: (error: any) => {
+      console.error("Order status update error:", error);
       toast({
         title: "Error",
-        description: "Failed to update order status",
+        description: error?.message || "Failed to update order status",
         variant: "destructive",
       });
     },

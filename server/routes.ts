@@ -412,6 +412,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const id = parseInt(req.params.id);
       const { status } = req.body;
       
+      console.log(`Updating order ${id} status to ${status}`);
+      
       if (!status || !["pending", "confirmed", "shipped", "delivered", "cancelled"].includes(status)) {
         return res.status(400).json({ message: "Invalid status" });
       }
@@ -421,6 +423,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Order not found" });
       }
       
+      console.log(`Order ${id} status updated successfully to ${status}`);
+      
       // Broadcast status update to all connected clients
       broadcastToClients(JSON.stringify({
         type: 'order_status_updated',
@@ -429,6 +433,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.json(updatedOrder);
     } catch (error) {
+      console.error("Error updating order status:", error);
       res.status(500).json({ message: "Failed to update order status" });
     }
   });
