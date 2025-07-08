@@ -21,7 +21,10 @@ const productSchema = z.object({
   price: z.string().min(1, "Price is required"),
   imageUrls: z.array(z.string().url("Must be a valid URL")).optional(),
   categoryId: z.string().min(1, "Category is required"),
-  inventory: z.string().min(1, "Inventory is required"),
+  inventory: z.string().min(1, "Inventory is required").refine((val) => {
+    const num = parseInt(val);
+    return !isNaN(num) && num >= 0;
+  }, "Inventory cannot be negative"),
   section: z.enum(["retail", "wholesale"]),
   isNew: z.boolean().default(false),
   isBestseller: z.boolean().default(false),
@@ -177,6 +180,7 @@ export default function AdminProductForm({ product, defaultSection = "retail" }:
               <Input
                 id="inventory"
                 type="number"
+                min="0"
                 {...form.register("inventory")}
                 placeholder="0"
                 disabled={createProductMutation.isPending}

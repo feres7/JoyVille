@@ -141,6 +141,7 @@ export const insertProductSchema = createInsertSchema(products).omit({
   createdAt: true,
 }).extend({
   imageUrls: z.array(z.string().url()).optional(),
+  inventory: z.number().min(0, "Inventory cannot be negative"),
 });
 
 export const insertCartItemSchema = createInsertSchema(cartItems).omit({
