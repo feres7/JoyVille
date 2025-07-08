@@ -58,7 +58,8 @@ export default function UserAuthDialog({ children }: UserAuthDialogProps) {
     },
     onSuccess: () => {
       setOpen(false);
-      queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
+      // Clear all cached data when switching users
+      queryClient.clear();
       toast({
         title: "Welcome back!",
         description: "You have successfully logged in.",
@@ -80,7 +81,8 @@ export default function UserAuthDialog({ children }: UserAuthDialogProps) {
     },
     onSuccess: () => {
       setOpen(false);
-      queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
+      // Clear all cached data for new user registration
+      queryClient.clear();
       toast({
         title: "Welcome to Joyville!",
         description: "Your account has been created successfully.",

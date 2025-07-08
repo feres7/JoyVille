@@ -22,7 +22,8 @@ export default function NavigationHeader() {
       return await apiRequest("POST", "/api/auth/logout", {});
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
+      // Clear all user-specific cached data
+      queryClient.clear();
       toast({
         title: "Goodbye!",
         description: "You have been logged out successfully.",
