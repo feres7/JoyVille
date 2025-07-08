@@ -162,7 +162,7 @@ export default function CartDropdown() {
                               type="number"
                               min="0"
                               max="999"
-                              value={localQuantities[item.id] ?? item.quantity}
+                              value={localQuantities[item.id] !== undefined ? localQuantities[item.id] : item.quantity}
                               onChange={(e) => handleQuantityChange(item.id, e.target.value)}
                               className={`w-14 h-6 text-center text-sm p-0 border-gray-300 ${
                                 localQuantities[item.id] === 0 ? 'border-red-500' : ''
