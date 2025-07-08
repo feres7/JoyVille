@@ -8,12 +8,14 @@ import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
 import { Minus, Plus, Trash2 } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
 import type { CartItemWithProduct } from "@shared/schema";
 
 export default function CartDropdown() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [, navigate] = useLocation();
+  const [localQuantities, setLocalQuantities] = useState<Record<number, number>>({});
 
   const { data: cartItems = [] } = useQuery<CartItemWithProduct[]>({
     queryKey: ["/api/cart"],
@@ -62,10 +64,38 @@ export default function CartDropdown() {
     },
   });
 
-  const handleUpdateQuantity = (id: number, newQuantity: number) => {
+  const handleUpdateQuantity = useCallback((id: number, newQuantity: number) => {
     if (newQuantity < 1) return;
     updateCartMutation.mutate({ id, quantity: newQuantity });
-  };
+  }, [updateCartMutation]);
+
+  const handleQuantityChange = useCallback((id: number, value: string) => {
+    const newQuantity = parseInt(value) || 1;
+    if (newQuantity > 0 && newQuantity <= 999) {
+      setLocalQuantities(prev => ({ ...prev, [id]: newQuantity }));
+    }
+  }, []);
+
+  // Debounced update effect
+  useEffect(() => {
+    const timeouts: Record<number, NodeJS.Timeout> = {};
+    
+    Object.entries(localQuantities).forEach(([id, quantity]) => {
+      const itemId = parseInt(id);
+      timeouts[itemId] = setTimeout(() => {
+        handleUpdateQuantity(itemId, quantity);
+        setLocalQuantities(prev => {
+          const newState = { ...prev };
+          delete newState[itemId];
+          return newState;
+        });
+      }, 500);
+    });
+
+    return () => {
+      Object.values(timeouts).forEach(clearTimeout);
+    };
+  }, [localQuantities, handleUpdateQuantity]);
 
   const handleRemoveItem = (id: number) => {
     removeFromCartMutation.mutate(id);
@@ -121,15 +151,10 @@ export default function CartDropdown() {
                           <Input
                             type="number"
                             min="1"
-                            max="99"
-                            value={item.quantity}
-                            onChange={(e) => {
-                              const newQuantity = parseInt(e.target.value) || 1;
-                              if (newQuantity > 0 && newQuantity <= 99) {
-                                handleUpdateQuantity(item.id, newQuantity);
-                              }
-                            }}
-                            className="w-12 h-6 text-center text-sm p-0 border-gray-300"
+                            max="999"
+                            value={localQuantities[item.id] ?? item.quantity}
+                            onChange={(e) => handleQuantityChange(item.id, e.target.value)}
+                            className="w-14 h-6 text-center text-sm p-0 border-gray-300"
                             disabled={updateCartMutation.isPending}
                           />
                           <Button
