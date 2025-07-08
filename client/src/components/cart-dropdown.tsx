@@ -65,13 +65,32 @@ export default function CartDropdown() {
   });
 
   const handleUpdateQuantity = useCallback((id: number, newQuantity: number) => {
-    if (newQuantity < 1) return;
+    if (newQuantity < 1) {
+      // Reset to 1 if user left it empty or 0
+      setLocalQuantities(prev => {
+        const newState = { ...prev };
+        delete newState[id];
+        return newState;
+      });
+      toast({
+        title: "Invalid quantity",
+        description: "Quantity must be at least 1. Set to 1.",
+        variant: "destructive",
+      });
+      return;
+    }
     updateCartMutation.mutate({ id, quantity: newQuantity });
-  }, [updateCartMutation]);
+  }, [updateCartMutation, toast]);
 
   const handleQuantityChange = useCallback((id: number, value: string) => {
-    const newQuantity = parseInt(value) || 1;
-    if (newQuantity > 0 && newQuantity <= 999) {
+    // Allow empty string for user to delete content
+    if (value === '') {
+      setLocalQuantities(prev => ({ ...prev, [id]: 0 }));
+      return;
+    }
+    
+    const newQuantity = parseInt(value);
+    if (!isNaN(newQuantity) && newQuantity >= 0 && newQuantity <= 999) {
       setLocalQuantities(prev => ({ ...prev, [id]: newQuantity }));
     }
   }, []);
@@ -150,11 +169,14 @@ export default function CartDropdown() {
                           </Button>
                           <Input
                             type="number"
-                            min="1"
+                            min="0"
                             max="999"
                             value={localQuantities[item.id] ?? item.quantity}
                             onChange={(e) => handleQuantityChange(item.id, e.target.value)}
-                            className="w-14 h-6 text-center text-sm p-0 border-gray-300"
+                            className={`w-14 h-6 text-center text-sm p-0 border-gray-300 ${
+                              localQuantities[item.id] === 0 ? 'border-red-300 bg-red-50' : ''
+                            }`}
+                            placeholder="1"
                             disabled={updateCartMutation.isPending}
                           />
                           <Button
