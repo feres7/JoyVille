@@ -40,8 +40,12 @@ export default function ProductCard({ product, badge }: ProductCardProps) {
   });
 
   const handleAddToCart = () => {
-    addToCartMutation.mutate();
+    if (product.inventory > 0) {
+      addToCartMutation.mutate();
+    }
   };
+
+  const isOutOfStock = product.inventory === 0;
 
   return (
     <ProductDetailModal product={product}>
@@ -70,10 +74,19 @@ export default function ProductCard({ product, badge }: ProductCardProps) {
                 e.stopPropagation();
                 handleAddToCart();
               }}
-              disabled={addToCartMutation.isPending}
-              className="bg-mint-300 hover:bg-mint-400 text-gray-800 px-3 py-1 rounded-full text-sm font-medium transition-colors border-none"
+              disabled={addToCartMutation.isPending || isOutOfStock}
+              className={`px-3 py-1 rounded-full text-sm font-medium transition-colors border-none ${
+                isOutOfStock 
+                  ? "bg-gray-300 text-gray-500 cursor-not-allowed" 
+                  : "bg-mint-300 hover:bg-mint-400 text-gray-800"
+              }`}
             >
-              {addToCartMutation.isPending ? "Adding..." : "Add to Cart"}
+              {addToCartMutation.isPending 
+                ? "Adding..." 
+                : isOutOfStock 
+                  ? "Out of Stock" 
+                  : "Add to Cart"
+              }
             </Button>
           </div>
         </CardContent>
