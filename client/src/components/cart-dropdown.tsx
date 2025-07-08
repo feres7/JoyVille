@@ -22,7 +22,7 @@ export default function CartDropdown() {
     enabled: true,
   });
 
-  const cartItemCount = cartItems.reduce((total: number, item: CartItemWithProduct) => total + (item.quantity || 0), 0);
+  const cartItemCount = cartItems.length;
   const cartTotal = cartItems.reduce((total: number, item: CartItemWithProduct) => {
     const price = typeof item.product?.price === 'string' ? parseFloat(item.product.price) : Number(item.product?.price) || 0;
     return total + price * (item.quantity || 0);
