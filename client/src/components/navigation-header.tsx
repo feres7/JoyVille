@@ -10,7 +10,7 @@ import UserAuthDialog from "@/components/user-auth-dialog";
 import CartDropdown from "@/components/cart-dropdown";
 
 export default function NavigationHeader() {
-  const [location] = useLocation();
+  const [location, setLocation] = useLocation();
   const { user, isLoggedIn } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -24,6 +24,7 @@ export default function NavigationHeader() {
     onSuccess: () => {
       // Clear all user-specific cached data
       queryClient.clear();
+      setLocation("/");
       toast({
         title: "Goodbye!",
         description: "You have been logged out successfully.",
