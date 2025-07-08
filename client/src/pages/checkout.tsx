@@ -15,7 +15,9 @@ import { Badge } from "@/components/ui/badge";
 import { ShoppingCart, MapPin, CreditCard, Package } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/use-auth";
 import { CartItemWithProduct } from "@shared/schema";
+import UserAuthDialog from "@/components/user-auth-dialog";
 
 const checkoutSchema = z.object({
   // Customer Information
@@ -87,6 +89,7 @@ export default function Checkout() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [sameAsBilling, setSameAsBilling] = useState(true);
+  const { user, isLoggedIn, isLoading: authLoading } = useAuth();
 
   const { data: cartItems = [], isLoading: cartLoading } = useQuery<CartItemWithProduct[]>({
     queryKey: ["/api/cart"],
@@ -150,7 +153,7 @@ export default function Checkout() {
     placeOrderMutation.mutate(data);
   };
 
-  if (cartLoading) {
+  if (cartLoading || authLoading) {
     return <div className="container mx-auto px-4 py-8">Loading...</div>;
   }
 
@@ -163,6 +166,31 @@ export default function Checkout() {
         <Button onClick={() => navigate("/")} className="bg-mint-400 hover:bg-mint-500">
           Continue Shopping
         </Button>
+      </div>
+    );
+  }
+
+  // Require authentication for checkout
+  if (!isLoggedIn) {
+    return (
+      <div className="container mx-auto px-4 py-8 text-center">
+        <ShoppingCart className="w-16 h-16 mx-auto mb-4 text-mint-400" />
+        <h2 className="text-2xl font-bold mb-4">Please Login to Continue</h2>
+        <p className="text-gray-600 mb-6">You need to be logged in to place an order and track your purchases.</p>
+        <UserAuthDialog>
+          <Button className="bg-mint-400 hover:bg-mint-500 text-white px-8 py-3">
+            Login to Checkout
+          </Button>
+        </UserAuthDialog>
+        <div className="mt-4">
+          <Button 
+            variant="outline" 
+            onClick={() => navigate("/")}
+            className="ml-2"
+          >
+            Continue Shopping
+          </Button>
+        </div>
       </div>
     );
   }

@@ -283,6 +283,81 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Order routes
+  app.post("/api/orders", requireAuth, async (req, res) => {
+    try {
+      const sessionId = req.sessionID;
+      const userId = req.session?.user?.id;
+      
+      if (!userId) {
+        return res.status(401).json({ message: "User not authenticated" });
+      }
+
+      // Get cart items to create order items
+      const cartItems = await storage.getCartItems(sessionId);
+      if (cartItems.length === 0) {
+        return res.status(400).json({ message: "Cart is empty" });
+      }
+
+      // Calculate total
+      const totalAmount = cartItems.reduce((total, item) => {
+        return total + (parseFloat(item.product?.price || "0") * (item.quantity || 0));
+      }, 0);
+
+      // Create order
+      const orderData = insertOrderSchema.parse({
+        ...req.body,
+        userId,
+        sessionId,
+        totalAmount: totalAmount.toString(),
+      });
+
+      const newOrder = await storage.createOrder(orderData);
+
+      // Create order items
+      for (const cartItem of cartItems) {
+        if (cartItem.product) {
+          await storage.createOrderItem({
+            orderId: newOrder.id,
+            productId: cartItem.productId!,
+            quantity: cartItem.quantity || 1,
+            price: cartItem.product.price,
+          });
+        }
+      }
+
+      // Clear cart after successful order
+      await storage.clearCart(sessionId);
+
+      res.status(201).json(newOrder);
+    } catch (error) {
+      console.error("Order creation error:", error);
+      res.status(400).json({ message: "Failed to create order" });
+    }
+  });
+
+  app.get("/api/orders", requireAuth, async (req, res) => {
+    try {
+      const orders = await storage.getOrders();
+      res.json(orders);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch orders" });
+    }
+  });
+
+  app.get("/api/orders/:id", requireAuth, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const order = await storage.getOrder(id);
+      if (!order) {
+        return res.status(404).json({ message: "Order not found" });
+      }
+      res.json(order);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch order" });
+    }
+  });
+
   // Dashboard routes
   app.get("/api/dashboard/stats", requireAuth, async (req, res) => {
     try {

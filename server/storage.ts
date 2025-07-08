@@ -3,7 +3,8 @@ import {
   type User, type InsertUser, type Category, type InsertCategory,
   type Product, type InsertProduct, type ProductWithCategory,
   type CartItem, type InsertCartItem, type CartItemWithProduct,
-  type Order, type InsertOrder, type OrderWithItems
+  type Order, type InsertOrder, type OrderWithItems,
+  type OrderItem, type InsertOrderItem
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, desc, asc, sql } from "drizzle-orm";
@@ -37,6 +38,7 @@ export interface IStorage {
   
   // Order operations
   createOrder(order: InsertOrder): Promise<Order>;
+  createOrderItem(orderItem: InsertOrderItem): Promise<OrderItem>;
   getOrders(): Promise<OrderWithItems[]>;
   getOrder(id: number): Promise<OrderWithItems | undefined>;
   
@@ -321,6 +323,11 @@ export class DatabaseStorage implements IStorage {
   async createOrder(order: InsertOrder): Promise<Order> {
     const [newOrder] = await db.insert(orders).values(order).returning();
     return newOrder;
+  }
+
+  async createOrderItem(orderItem: InsertOrderItem): Promise<OrderItem> {
+    const [newOrderItem] = await db.insert(orderItems).values(orderItem).returning();
+    return newOrderItem;
   }
 
   async getOrders(): Promise<OrderWithItems[]> {

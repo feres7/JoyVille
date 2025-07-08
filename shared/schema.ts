@@ -45,6 +45,7 @@ export const cartItems = pgTable("cart_items", {
 
 export const orders = pgTable("orders", {
   id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id).notNull(),
   sessionId: text("session_id").notNull(),
   totalAmount: decimal("total_amount", { precision: 10, scale: 2 }).notNull(),
   status: text("status").notNull().default("pending"), // "pending", "confirmed", "shipped", "delivered"
@@ -78,6 +79,10 @@ export const orderItems = pgTable("order_items", {
 });
 
 // Relations
+export const usersRelations = relations(users, ({ many }) => ({
+  orders: many(orders),
+}));
+
 export const categoriesRelations = relations(categories, ({ many }) => ({
   products: many(products),
 }));
@@ -98,7 +103,11 @@ export const cartItemsRelations = relations(cartItems, ({ one }) => ({
   }),
 }));
 
-export const ordersRelations = relations(orders, ({ many }) => ({
+export const ordersRelations = relations(orders, ({ one, many }) => ({
+  user: one(users, {
+    fields: [orders.userId],
+    references: [users.id],
+  }),
   orderItems: many(orderItems),
 }));
 
