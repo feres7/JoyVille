@@ -66,21 +66,11 @@ export default function CartDropdown() {
 
   const handleUpdateQuantity = useCallback((id: number, newQuantity: number) => {
     if (newQuantity < 1) {
-      // Reset to 1 if user left it empty or 0
-      setLocalQuantities(prev => {
-        const newState = { ...prev };
-        delete newState[id];
-        return newState;
-      });
-      toast({
-        title: "Invalid quantity",
-        description: "Quantity must be at least 1. Set to 1.",
-        variant: "destructive",
-      });
+      // Don't update, just keep the invalid value in local state for visual feedback
       return;
     }
     updateCartMutation.mutate({ id, quantity: newQuantity });
-  }, [updateCartMutation, toast]);
+  }, [updateCartMutation]);
 
   const handleQuantityChange = useCallback((id: number, value: string) => {
     // Allow empty string for user to delete content
@@ -167,18 +157,25 @@ export default function CartDropdown() {
                           >
                             <Minus className="h-3 w-3" />
                           </Button>
-                          <Input
-                            type="number"
-                            min="0"
-                            max="999"
-                            value={localQuantities[item.id] ?? item.quantity}
-                            onChange={(e) => handleQuantityChange(item.id, e.target.value)}
-                            className={`w-14 h-6 text-center text-sm p-0 border-gray-300 ${
-                              localQuantities[item.id] === 0 ? 'border-red-300 bg-red-50' : ''
-                            }`}
-                            placeholder="1"
-                            disabled={updateCartMutation.isPending}
-                          />
+                          <div className="relative">
+                            <Input
+                              type="number"
+                              min="0"
+                              max="999"
+                              value={localQuantities[item.id] ?? item.quantity}
+                              onChange={(e) => handleQuantityChange(item.id, e.target.value)}
+                              className={`w-14 h-6 text-center text-sm p-0 border-gray-300 ${
+                                localQuantities[item.id] === 0 ? 'border-red-500' : ''
+                              }`}
+                              placeholder="1"
+                              disabled={updateCartMutation.isPending}
+                            />
+                            {localQuantities[item.id] === 0 && (
+                              <div className="absolute -bottom-4 left-0 right-0 text-xs text-red-500 text-center whitespace-nowrap">
+                                Quantity cannot be 0
+                              </div>
+                            )}
+                          </div>
                           <Button
                             variant="outline"
                             size="sm"
