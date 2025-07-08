@@ -5,6 +5,7 @@ import { insertUserSchema, insertProductSchema, insertCategorySchema, insertCart
 import { z } from "zod";
 import bcrypt from "bcrypt";
 import session from "express-session";
+import { WebSocketServer, WebSocket } from "ws";
 
 // Extend session type to include user
 declare module "express-session" {
@@ -28,7 +29,33 @@ const signupSchema = z.object({
   password: z.string().min(6),
 });
 
+// WebSocket connections for real-time updates
+const wsConnections = new Set<WebSocket>();
+
+function broadcastToClients(message: string) {
+  wsConnections.forEach((ws) => {
+    if (ws.readyState === WebSocket.OPEN) {
+      ws.send(message);
+    }
+  });
+}
+
 export async function registerRoutes(app: Express): Promise<Server> {
+  const httpServer = createServer(app);
+  
+  // WebSocket server for real-time updates
+  const wss = new WebSocketServer({ server: httpServer, path: '/ws' });
+  
+  wss.on('connection', (ws) => {
+    console.log('WebSocket client connected');
+    wsConnections.add(ws);
+    
+    ws.on('close', () => {
+      console.log('WebSocket client disconnected');
+      wsConnections.delete(ws);
+    });
+  });
+
   // Session configuration
   app.use(session({
     secret: process.env.SESSION_SECRET || "joyville-secret-key",
@@ -337,6 +364,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Clear cart after successful order
       await storage.clearCart(sessionId);
 
+      // Broadcast order update to all connected clients
+      broadcastToClients(JSON.stringify({
+        type: 'order_created',
+        order: newOrder,
+        userId: userId
+      }));
+
       res.status(201).json(newOrder);
     } catch (error) {
       console.error("Order creation error:", error);
@@ -383,7 +417,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  const httpServer = createServer(app);
   return httpServer;
 }
 
