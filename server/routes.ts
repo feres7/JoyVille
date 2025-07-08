@@ -51,6 +51,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
     next();
   };
 
+  // Customer auth middleware (allows any authenticated user)
+  const requireCustomerAuth = (req: any, res: any, next: any) => {
+    if (!req.session?.user) {
+      return res.status(401).json({ message: "Authentication required" });
+    }
+    next();
+  };
+
   // Authentication routes
   app.post("/api/auth/login", async (req, res) => {
     try {
@@ -284,7 +292,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Order routes
-  app.post("/api/orders", requireAuth, async (req, res) => {
+  app.post("/api/orders", requireCustomerAuth, async (req, res) => {
     try {
       const sessionId = req.sessionID;
       const userId = req.session?.user?.id;
@@ -336,7 +344,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/orders", requireAuth, async (req, res) => {
+  app.get("/api/orders", requireCustomerAuth, async (req, res) => {
     try {
       const orders = await storage.getOrders();
       res.json(orders);
@@ -345,7 +353,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/orders/:id", requireAuth, async (req, res) => {
+  app.get("/api/orders/:id", requireCustomerAuth, async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const order = await storage.getOrder(id);
