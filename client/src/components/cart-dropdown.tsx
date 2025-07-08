@@ -75,13 +75,16 @@ export default function CartDropdown() {
   const handleQuantityChange = useCallback((id: number, value: string) => {
     // Allow empty string for user to delete content
     if (value === '') {
-      setLocalQuantities(prev => ({ ...prev, [id]: '' as any }));
+      setLocalQuantities(prev => ({ ...prev, [id]: '' }));
       return;
     }
     
-    const newQuantity = parseInt(value);
-    if (!isNaN(newQuantity) && newQuantity >= 0 && newQuantity <= 999) {
-      setLocalQuantities(prev => ({ ...prev, [id]: newQuantity }));
+    // Allow typing numbers, even if they start with 0
+    if (/^\d+$/.test(value)) {
+      const newQuantity = parseInt(value);
+      if (newQuantity >= 0 && newQuantity <= 999) {
+        setLocalQuantities(prev => ({ ...prev, [id]: newQuantity }));
+      }
     }
   }, []);
 
@@ -91,14 +94,17 @@ export default function CartDropdown() {
     
     Object.entries(localQuantities).forEach(([id, quantity]) => {
       const itemId = parseInt(id);
-      timeouts[itemId] = setTimeout(() => {
-        handleUpdateQuantity(itemId, quantity);
-        setLocalQuantities(prev => {
-          const newState = { ...prev };
-          delete newState[itemId];
-          return newState;
-        });
-      }, 500);
+      // Only set timeout for valid numbers, not empty strings
+      if (typeof quantity === 'number' && quantity > 0) {
+        timeouts[itemId] = setTimeout(() => {
+          handleUpdateQuantity(itemId, quantity);
+          setLocalQuantities(prev => {
+            const newState = { ...prev };
+            delete newState[itemId];
+            return newState;
+          });
+        }, 800);
+      }
     });
 
     return () => {
@@ -170,9 +176,14 @@ export default function CartDropdown() {
                               placeholder="1"
                               disabled={updateCartMutation.isPending}
                             />
-                            {(localQuantities[item.id] === '' || localQuantities[item.id] === 0) && (
+                            {localQuantities[item.id] === '' && (
                               <div className="absolute -bottom-4 left-0 right-0 text-xs text-red-500 text-center whitespace-nowrap">
-                                Quantity cannot be empty
+                                Quantity required
+                              </div>
+                            )}
+                            {localQuantities[item.id] === 0 && (
+                              <div className="absolute -bottom-4 left-0 right-0 text-xs text-red-500 text-center whitespace-nowrap">
+                                Quantity cannot be 0
                               </div>
                             )}
                           </div>
