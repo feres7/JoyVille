@@ -15,7 +15,7 @@ export default function CartDropdown() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [, navigate] = useLocation();
-  const [localQuantities, setLocalQuantities] = useState<Record<number, number>>({});
+  const [localQuantities, setLocalQuantities] = useState<Record<number, number | string>>({});
 
   const { data: cartItems = [] } = useQuery<CartItemWithProduct[]>({
     queryKey: ["/api/cart"],
@@ -64,8 +64,8 @@ export default function CartDropdown() {
     },
   });
 
-  const handleUpdateQuantity = useCallback((id: number, newQuantity: number) => {
-    if (newQuantity < 1) {
+  const handleUpdateQuantity = useCallback((id: number, newQuantity: number | string) => {
+    if (typeof newQuantity === 'string' || newQuantity < 1) {
       // Don't update, just keep the invalid value in local state for visual feedback
       return;
     }
@@ -75,7 +75,7 @@ export default function CartDropdown() {
   const handleQuantityChange = useCallback((id: number, value: string) => {
     // Allow empty string for user to delete content
     if (value === '') {
-      setLocalQuantities(prev => ({ ...prev, [id]: 0 }));
+      setLocalQuantities(prev => ({ ...prev, [id]: '' as any }));
       return;
     }
     
@@ -165,14 +165,14 @@ export default function CartDropdown() {
                               value={localQuantities[item.id] !== undefined ? localQuantities[item.id] : item.quantity}
                               onChange={(e) => handleQuantityChange(item.id, e.target.value)}
                               className={`w-14 h-6 text-center text-sm p-0 border-gray-300 ${
-                                localQuantities[item.id] === 0 ? 'border-red-500' : ''
+                                localQuantities[item.id] === '' || localQuantities[item.id] === 0 ? 'border-red-500' : ''
                               }`}
                               placeholder="1"
                               disabled={updateCartMutation.isPending}
                             />
-                            {localQuantities[item.id] === 0 && (
+                            {(localQuantities[item.id] === '' || localQuantities[item.id] === 0) && (
                               <div className="absolute -bottom-4 left-0 right-0 text-xs text-red-500 text-center whitespace-nowrap">
-                                Quantity cannot be 0
+                                Quantity cannot be empty
                               </div>
                             )}
                           </div>
