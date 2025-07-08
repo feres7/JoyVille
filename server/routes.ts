@@ -407,6 +407,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.patch("/api/orders/:id/status", requireAuth, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const { status } = req.body;
+      
+      if (!status || !["pending", "confirmed", "shipped", "delivered", "cancelled"].includes(status)) {
+        return res.status(400).json({ message: "Invalid status" });
+      }
+      
+      const updatedOrder = await storage.updateOrderStatus(id, status);
+      if (!updatedOrder) {
+        return res.status(404).json({ message: "Order not found" });
+      }
+      
+      // Broadcast status update to all connected clients
+      broadcastToClients(JSON.stringify({
+        type: 'order_status_updated',
+        order: updatedOrder
+      }));
+      
+      res.json(updatedOrder);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to update order status" });
+    }
+  });
+
   // Dashboard routes
   app.get("/api/dashboard/stats", requireAuth, async (req, res) => {
     try {

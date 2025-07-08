@@ -9,7 +9,7 @@ import { OrderWithItems } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 
-export default function Orders() {
+export default function OrdersEnhanced() {
   const { user, isLoggedIn } = useAuth();
   const isAdmin = user?.role === "superadmin";
   const { toast } = useToast();
@@ -87,9 +87,16 @@ export default function Orders() {
     });
   };
 
+  const formatCurrency = (amount: string) => {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+    }).format(parseFloat(amount));
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-6xl mx-auto">
         <h1 className="text-3xl font-bold mb-8 flex items-center gap-2">
           <Package className="w-8 h-8 text-mint-400" />
           {isAdmin ? "All Orders" : "My Orders"}
@@ -115,56 +122,109 @@ export default function Orders() {
                 <CardHeader className="bg-gray-50">
                   <div className="flex justify-between items-start">
                     <div>
-                      <CardTitle className="flex items-center gap-2">
+                      <CardTitle className="flex items-center gap-3">
                         <span>Order #{order.id}</span>
-                        <Badge className={getStatusColor(order.status)}>
-                          {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
-                        </Badge>
+                        {isAdmin && order.user && (
+                          <div className="flex items-center space-x-1 text-sm font-normal text-gray-600">
+                            <User className="w-4 h-4" />
+                            <span>by {order.user.username}</span>
+                          </div>
+                        )}
                       </CardTitle>
-                      <div className="flex items-center gap-4 mt-2 text-sm text-gray-600">
+                      <div className="flex items-center gap-4 text-sm text-gray-600 mt-2">
                         <div className="flex items-center gap-1">
                           <Calendar className="w-4 h-4" />
-                          {formatDate(order.createdAt)}
+                          <span>{formatDate(order.createdAt)}</span>
                         </div>
                         <div className="flex items-center gap-1">
                           <DollarSign className="w-4 h-4" />
-                          ${parseFloat(order.totalAmount).toFixed(2)}
+                          <span>{formatCurrency(order.totalAmount)}</span>
                         </div>
-                        {isAdmin && (
-                          <div className="flex items-center gap-1">
-                            <User className="w-4 h-4" />
-                            Customer #{order.userId}
-                          </div>
-                        )}
                       </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Badge className={getStatusColor(order.status)}>
+                        {order.status}
+                      </Badge>
+                      {isAdmin && (
+                        <Select 
+                          value={order.status} 
+                          onValueChange={(value) => handleStatusChange(order.id, value)}
+                          disabled={statusUpdateMutation.isPending}
+                        >
+                          <SelectTrigger className="w-32">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="pending">Pending</SelectItem>
+                            <SelectItem value="confirmed">Confirmed</SelectItem>
+                            <SelectItem value="shipped">Shipped</SelectItem>
+                            <SelectItem value="delivered">Delivered</SelectItem>
+                            <SelectItem value="cancelled">Cancelled</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      )}
                     </div>
                   </div>
                 </CardHeader>
 
                 <CardContent className="p-6">
-                  <div className="grid md:grid-cols-2 gap-6">
-                    {/* Customer Information */}
+                  {/* Order Items */}
+                  <div className="mb-6">
+                    <div className="flex items-center gap-2 mb-3">
+                      <ShoppingCart className="w-5 h-5 text-gray-600" />
+                      <h4 className="font-semibold">Order Items</h4>
+                    </div>
+                    <div className="space-y-2">
+                      {order.orderItems?.map((item) => (
+                        <div key={item.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div className="flex items-center gap-3">
+                            <div className="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center">
+                              <Package className="w-6 h-6 text-gray-500" />
+                            </div>
+                            <div>
+                              <h5 className="font-medium">{item.product?.name || "Unknown Product"}</h5>
+                              <p className="text-sm text-gray-600">
+                                Quantity: {item.quantity} × {formatCurrency(item.price)}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <p className="font-semibold">
+                              {formatCurrency((parseFloat(item.price) * item.quantity).toString())}
+                            </p>
+                          </div>
+                        </div>
+                      )) || (
+                        <p className="text-gray-500 text-sm">No items found</p>
+                      )}
+                    </div>
+                  </div>
+
+                  <Separator className="my-4" />
+
+                  {/* Customer Information */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <h4 className="font-semibold mb-3 flex items-center gap-2">
-                        <User className="w-4 h-4" />
+                        <User className="w-5 h-5 text-gray-600" />
                         Customer Information
                       </h4>
-                      <div className="space-y-1 text-sm">
-                        <p><span className="font-medium">Name:</span> {order.customerName}</p>
-                        <p><span className="font-medium">Email:</span> {order.customerEmail}</p>
+                      <div className="space-y-2 text-sm">
+                        <p><strong>Name:</strong> {order.customerName}</p>
+                        <p><strong>Email:</strong> {order.customerEmail}</p>
                         {order.customerPhone && (
-                          <p><span className="font-medium">Phone:</span> {order.customerPhone}</p>
+                          <p><strong>Phone:</strong> {order.customerPhone}</p>
                         )}
                       </div>
                     </div>
 
-                    {/* Shipping Information */}
                     <div>
                       <h4 className="font-semibold mb-3 flex items-center gap-2">
-                        <MapPin className="w-4 h-4" />
+                        <MapPin className="w-5 h-5 text-gray-600" />
                         Shipping Address
                       </h4>
-                      <div className="text-sm">
+                      <div className="space-y-1 text-sm">
                         <p>{order.shippingAddress}</p>
                         <p>{order.shippingCity}, {order.shippingState} {order.shippingZipCode}</p>
                         <p>{order.shippingCountry}</p>
@@ -172,33 +232,13 @@ export default function Orders() {
                     </div>
                   </div>
 
-                  {/* Billing Address (if different) */}
-                  {order.billingAddress && (
-                    <>
-                      <Separator className="my-4" />
-                      <div>
-                        <h4 className="font-semibold mb-3 flex items-center gap-2">
-                          <MapPin className="w-4 h-4" />
-                          Billing Address
-                        </h4>
-                        <div className="text-sm">
-                          <p>{order.billingAddress}</p>
-                          <p>{order.billingCity}, {order.billingState} {order.billingZipCode}</p>
-                          <p>{order.billingCountry}</p>
-                        </div>
-                      </div>
-                    </>
-                  )}
-
-                  {/* Order Notes */}
                   {order.orderNotes && (
-                    <>
-                      <Separator className="my-4" />
-                      <div>
-                        <h4 className="font-semibold mb-2">Order Notes</h4>
-                        <p className="text-sm text-gray-600">{order.orderNotes}</p>
-                      </div>
-                    </>
+                    <div className="mt-6">
+                      <h4 className="font-semibold mb-2">Order Notes</h4>
+                      <p className="text-sm text-gray-600 p-3 bg-gray-50 rounded-lg">
+                        {order.orderNotes}
+                      </p>
+                    </div>
                   )}
                 </CardContent>
               </Card>

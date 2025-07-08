@@ -181,4 +181,7 @@ export type InsertOrderItem = z.infer<typeof insertOrderItemSchema>;
 export type ProductWithCategory = Product & { category?: Category | null };
 export type CartItemWithProduct = CartItem & { product?: ProductWithCategory };
 export type OrderItemWithProduct = OrderItem & { product?: ProductWithCategory };
-export type OrderWithItems = Order & { orderItems?: OrderItemWithProduct[] };
+export type OrderWithItems = Order & { 
+  user?: User | null;
+  orderItems?: OrderItemWithProduct[] 
+};

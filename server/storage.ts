@@ -42,6 +42,7 @@ export interface IStorage {
   getOrders(): Promise<OrderWithItems[]>;
   getOrdersByUser(userId: number): Promise<OrderWithItems[]>;
   getOrder(id: number): Promise<OrderWithItems | undefined>;
+  updateOrderStatus(id: number, status: string): Promise<Order | undefined>;
   
   // Dashboard stats
   getDashboardStats(): Promise<{
@@ -332,23 +333,58 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getOrders(): Promise<OrderWithItems[]> {
-    return await db
-      .select()
-      .from(orders)
-      .orderBy(desc(orders.createdAt));
+    const ordersWithItems = await db.query.orders.findMany({
+      with: {
+        user: true,
+        orderItems: {
+          with: {
+            product: true,
+          },
+        },
+      },
+      orderBy: (orders, { desc }) => [desc(orders.createdAt)],
+    });
+    return ordersWithItems as OrderWithItems[];
   }
 
   async getOrdersByUser(userId: number): Promise<OrderWithItems[]> {
-    return await db
-      .select()
-      .from(orders)
-      .where(eq(orders.userId, userId))
-      .orderBy(desc(orders.createdAt));
+    const ordersWithItems = await db.query.orders.findMany({
+      where: eq(orders.userId, userId),
+      with: {
+        user: true,
+        orderItems: {
+          with: {
+            product: true,
+          },
+        },
+      },
+      orderBy: (orders, { desc }) => [desc(orders.createdAt)],
+    });
+    return ordersWithItems as OrderWithItems[];
   }
 
   async getOrder(id: number): Promise<OrderWithItems | undefined> {
-    const [order] = await db.select().from(orders).where(eq(orders.id, id));
-    return order || undefined;
+    const order = await db.query.orders.findFirst({
+      where: eq(orders.id, id),
+      with: {
+        user: true,
+        orderItems: {
+          with: {
+            product: true,
+          },
+        },
+      },
+    });
+    return order as OrderWithItems || undefined;
+  }
+
+  async updateOrderStatus(id: number, status: string): Promise<Order | undefined> {
+    const result = await db
+      .update(orders)
+      .set({ status })
+      .where(eq(orders.id, id))
+      .returning();
+    return result[0] || undefined;
   }
 
   async getDashboardStats(): Promise<{

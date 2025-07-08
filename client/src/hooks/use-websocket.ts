@@ -29,7 +29,7 @@ export function useWebSocket() {
         try {
           const data = JSON.parse(event.data);
           
-          if (data.type === 'order_created') {
+          if (data.type === 'order_created' || data.type === 'order_status_updated') {
             // Invalidate orders query to refresh the orders list
             queryClient.invalidateQueries({ queryKey: ['/api/orders'] });
           }
