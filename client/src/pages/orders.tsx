@@ -189,6 +189,54 @@ export default function Orders() {
                     </>
                   )}
 
+                  {/* Order Items */}
+                  <Separator className="my-4" />
+                  <div>
+                    <h4 className="font-semibold mb-3 flex items-center gap-2">
+                      <ShoppingCart className="w-4 h-4" />
+                      Order Items
+                    </h4>
+                    <div className="space-y-2">
+                      {order.orderItems?.map((item) => (
+                        <div key={item.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div className="flex items-center gap-3">
+                            <div className="w-14 h-14 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">
+                              {item.product?.imageUrls?.[0] ? (
+                                <img 
+                                  src={item.product.imageUrls[0]} 
+                                  alt={item.product.name || "Product"} 
+                                  className="w-full h-full object-cover"
+                                />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center">
+                                  <Package className="w-6 h-6 text-gray-500" />
+                                </div>
+                              )}
+                            </div>
+                            <div>
+                              <h5 className="font-medium text-sm">{item.product?.name || "Unknown Product"}</h5>
+                              <p className="text-xs text-gray-600">
+                                {item.product?.category?.name && (
+                                  <span className="text-xs bg-gray-200 px-2 py-1 rounded mr-2">
+                                    {item.product.category.name}
+                                  </span>
+                                )}
+                                Qty: {item.quantity} × ${parseFloat(item.price).toFixed(2)}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <p className="font-semibold text-sm">
+                              ${(parseFloat(item.price) * item.quantity).toFixed(2)}
+                            </p>
+                          </div>
+                        </div>
+                      )) || (
+                        <p className="text-gray-500 text-sm">No items found</p>
+                      )}
+                    </div>
+                  </div>
+
                   {/* Order Notes */}
                   {order.orderNotes && (
                     <>

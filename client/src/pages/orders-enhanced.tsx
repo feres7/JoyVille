@@ -179,12 +179,27 @@ export default function OrdersEnhanced() {
                       {order.orderItems?.map((item) => (
                         <div key={item.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                           <div className="flex items-center gap-3">
-                            <div className="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center">
-                              <Package className="w-6 h-6 text-gray-500" />
+                            <div className="w-16 h-16 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">
+                              {item.product?.imageUrls?.[0] ? (
+                                <img 
+                                  src={item.product.imageUrls[0]} 
+                                  alt={item.product.name || "Product"} 
+                                  className="w-full h-full object-cover"
+                                />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center">
+                                  <Package className="w-8 h-8 text-gray-500" />
+                                </div>
+                              )}
                             </div>
                             <div>
                               <h5 className="font-medium">{item.product?.name || "Unknown Product"}</h5>
                               <p className="text-sm text-gray-600">
+                                {item.product?.category?.name && (
+                                  <span className="text-xs bg-gray-200 px-2 py-1 rounded mr-2">
+                                    {item.product.category.name}
+                                  </span>
+                                )}
                                 Quantity: {item.quantity} × {formatCurrency(item.price)}
                               </p>
                             </div>
