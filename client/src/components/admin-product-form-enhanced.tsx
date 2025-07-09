@@ -73,9 +73,15 @@ export default function AdminProductFormEnhanced({ product, defaultSection = "re
       };
       
       if (product) {
-        return await apiRequest("PUT", `/api/products/${product.id}`, productData);
+        return await apiRequest(`/api/products/${product.id}`, {
+          method: "PUT",
+          body: JSON.stringify(productData),
+        });
       } else {
-        return await apiRequest("POST", "/api/products", productData);
+        return await apiRequest("/api/products", {
+          method: "POST", 
+          body: JSON.stringify(productData),
+        });
       }
     },
     onSuccess: () => {

@@ -30,7 +30,10 @@ export default function CartDropdown() {
 
   const updateCartMutation = useMutation({
     mutationFn: async ({ id, quantity }: { id: number; quantity: number }) => {
-      return await apiRequest("PUT", `/api/cart/${id}`, { quantity });
+      return await apiRequest(`/api/cart/${id}`, {
+        method: "PUT",
+        body: JSON.stringify({ quantity }),
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/cart"] });
@@ -46,7 +49,9 @@ export default function CartDropdown() {
 
   const removeFromCartMutation = useMutation({
     mutationFn: async (id: number) => {
-      return await apiRequest("DELETE", `/api/cart/${id}`);
+      return await apiRequest(`/api/cart/${id}`, {
+        method: "DELETE",
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/cart"] });

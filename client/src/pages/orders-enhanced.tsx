@@ -25,7 +25,6 @@ export default function OrdersEnhanced() {
       return await apiRequest(`/api/orders/${orderId}/status`, {
         method: "PATCH",
         body: JSON.stringify({ status }),
-        headers: { "Content-Type": "application/json" },
       });
     },
     onSuccess: () => {

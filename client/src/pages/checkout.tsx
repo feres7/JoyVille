@@ -130,7 +130,10 @@ export default function Checkout() {
         } : {}),
       };
       
-      return await apiRequest("POST", "/api/orders", orderData);
+      return await apiRequest("/api/orders", {
+        method: "POST",
+        body: JSON.stringify(orderData),
+      });
     },
     onSuccess: () => {
       toast({

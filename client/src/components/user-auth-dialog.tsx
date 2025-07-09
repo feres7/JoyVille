@@ -54,7 +54,10 @@ export default function UserAuthDialog({ children }: UserAuthDialogProps) {
 
   const loginMutation = useMutation({
     mutationFn: async (data: LoginFormData) => {
-      return await apiRequest("POST", "/api/auth/login", data);
+      return await apiRequest("/api/auth/login", {
+        method: "POST",
+        body: JSON.stringify(data),
+      });
     },
     onSuccess: () => {
       setOpen(false);
@@ -77,7 +80,10 @@ export default function UserAuthDialog({ children }: UserAuthDialogProps) {
 
   const signupMutation = useMutation({
     mutationFn: async (data: SignupFormData) => {
-      return await apiRequest("POST", "/api/auth/register", data);
+      return await apiRequest("/api/auth/register", {
+        method: "POST",
+        body: JSON.stringify(data),
+      });
     },
     onSuccess: () => {
       setOpen(false);

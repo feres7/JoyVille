@@ -37,7 +37,7 @@ export default function AdminDashboard() {
   });
 
   const logoutMutation = useMutation({
-    mutationFn: () => apiRequest("POST", "/api/auth/logout"),
+    mutationFn: () => apiRequest("/api/auth/logout", { method: "POST" }),
     onSuccess: () => {
       queryClient.clear();
       setLocation("/");
@@ -49,7 +49,7 @@ export default function AdminDashboard() {
   });
 
   const deleteProductMutation = useMutation({
-    mutationFn: (id: number) => apiRequest("DELETE", `/api/products/${id}`),
+    mutationFn: (id: number) => apiRequest(`/api/products/${id}`, { method: "DELETE" }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/products"] });
       toast({

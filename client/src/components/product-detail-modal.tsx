@@ -37,9 +37,12 @@ export default function ProductDetailModal({ product, children }: ProductDetailM
   
   const addToCartMutation = useMutation({
     mutationFn: async () => {
-      return await apiRequest("POST", "/api/cart", {
-        productId: product.id,
-        quantity: 1
+      return await apiRequest("/api/cart", {
+        method: "POST",
+        body: JSON.stringify({
+          productId: product.id,
+          quantity: 1,
+        }),
       });
     },
     onSuccess: () => {

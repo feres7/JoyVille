@@ -19,7 +19,9 @@ export default function NavigationHeader() {
 
   const logoutMutation = useMutation({
     mutationFn: async () => {
-      return await apiRequest("POST", "/api/auth/logout", {});
+      return await apiRequest("/api/auth/logout", {
+        method: "POST",
+      });
     },
     onSuccess: () => {
       // Clear all user-specific cached data
