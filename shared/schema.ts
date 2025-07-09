@@ -23,6 +23,7 @@ export const categories = pgTable("categories", {
 export const products = pgTable("products", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
+  reference: text("reference").notNull().unique(), // Product reference/SKU
   description: text("description"),
   price: decimal("price", { precision: 10, scale: 2 }).notNull(),
   imageUrls: text("image_urls").array(),

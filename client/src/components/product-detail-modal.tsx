@@ -150,6 +150,11 @@ export default function ProductDetailModal({ product, children }: ProductDetailM
               </div>
               
               <h1 className="text-3xl font-bold text-gray-900 mb-2">{product.name}</h1>
+              <div className="flex items-center gap-2 mb-4">
+                <span className="text-sm font-mono bg-gray-100 px-2 py-1 rounded">
+                  {product.reference}
+                </span>
+              </div>
               
               <div className="flex items-center gap-2 mb-4">
                 <div className="flex items-center">

@@ -69,7 +69,12 @@ export default function ProductCard({ product, badge }: ProductCardProps) {
         
         <CardContent className="p-4">
           <h3 className="font-semibold text-gray-800 mb-1">{product.name}</h3>
-          <p className="text-sm text-gray-600 mb-2">{product.category?.name}</p>
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-xs font-mono bg-gray-100 px-2 py-1 rounded">
+              {product.reference}
+            </span>
+            <span className="text-sm text-gray-600">{product.category?.name}</span>
+          </div>
           <div className="flex items-center justify-between">
             <span className="text-lg font-bold text-sunny-orange">${product.price}</span>
             <Button 

@@ -195,6 +195,11 @@ export default function OrdersEnhanced() {
                             <div>
                               <h5 className="font-medium">{item.product?.name || "Unknown Product"}</h5>
                               <p className="text-sm text-gray-600">
+                                {item.product?.reference && (
+                                  <span className="text-xs font-mono bg-gray-100 px-2 py-1 rounded mr-2">
+                                    {item.product.reference}
+                                  </span>
+                                )}
                                 {item.product?.category?.name && (
                                   <span className="text-xs bg-gray-200 px-2 py-1 rounded mr-2">
                                     {item.product.category.name}

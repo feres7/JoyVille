@@ -17,6 +17,7 @@ import type { ProductWithCategory, Category } from "@shared/schema";
 
 const productSchema = z.object({
   name: z.string().min(1, "Product name is required"),
+  reference: z.string().min(1, "Product reference is required"),
   description: z.string().optional(),
   price: z.string().min(1, "Price is required"),
   imageUrls: z.array(z.string().url("Must be a valid URL")).optional(),
@@ -51,6 +52,7 @@ export default function AdminProductForm({ product, defaultSection = "retail" }:
     resolver: zodResolver(productSchema),
     defaultValues: {
       name: product?.name || "",
+      reference: product?.reference || "",
       description: product?.description || "",
       price: product?.price || "",
       imageUrls: product?.imageUrls || [],
@@ -128,6 +130,19 @@ export default function AdminProductForm({ product, defaultSection = "retail" }:
               />
               {form.formState.errors.name && (
                 <p className="text-sm text-red-500">{form.formState.errors.name.message}</p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="reference">Product Reference</Label>
+              <Input
+                id="reference"
+                {...form.register("reference")}
+                placeholder="e.g., PLU-001, BLD-002"
+                disabled={createProductMutation.isPending}
+              />
+              {form.formState.errors.reference && (
+                <p className="text-sm text-red-500">{form.formState.errors.reference.message}</p>
               )}
             </div>
 
