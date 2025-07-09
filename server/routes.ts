@@ -413,13 +413,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { status } = req.body;
       
       console.log(`Updating order ${id} status to ${status}`);
+      console.log(`Request body:`, req.body);
+      console.log(`User session:`, req.session?.user);
       
       if (!status || !["pending", "confirmed", "shipped", "delivered", "cancelled"].includes(status)) {
+        console.error(`Invalid status provided: ${status}`);
         return res.status(400).json({ message: "Invalid status" });
       }
       
       const updatedOrder = await storage.updateOrderStatus(id, status);
       if (!updatedOrder) {
+        console.error(`Order not found: ${id}`);
         return res.status(404).json({ message: "Order not found" });
       }
       
@@ -434,7 +438,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(updatedOrder);
     } catch (error) {
       console.error("Error updating order status:", error);
-      res.status(500).json({ message: "Failed to update order status" });
+      console.error("Error stack:", error instanceof Error ? error.stack : error);
+      res.status(500).json({ message: "Failed to update order status", error: error instanceof Error ? error.message : String(error) });
     }
   });
 
