@@ -104,11 +104,18 @@ export default function Profile() {
       });
     },
     onError: (error: any) => {
-      console.log("Password error:", error);
+      // Extract just the message text from the error
+      let errorMessage = "Failed to update password";
+      
+      if (error && error.message) {
+        errorMessage = error.message;
+      } else if (typeof error === 'string') {
+        errorMessage = error;
+      }
       
       toast({
         title: "Error",
-        description: error.message || "Failed to update password",
+        description: errorMessage,
         variant: "destructive",
       });
     },
