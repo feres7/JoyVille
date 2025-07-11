@@ -177,25 +177,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.put("/api/auth/profile", requireCustomerAuth, async (req, res) => {
     try {
-      const { username, email } = req.body;
+      const { username } = req.body;
       
-      // Check if email is already taken by another user
-      if (email) {
-        const existingUser = await storage.getUserByEmail(email);
-        if (existingUser && existingUser.id !== req.session.user.id) {
-          return res.status(400).json({ message: "Email already exists" });
-        }
+      if (!username) {
+        return res.status(400).json({ message: "Username is required" });
       }
 
       // Check if username is already taken by another user
-      if (username) {
-        const existingUser = await storage.getUserByUsername(username);
-        if (existingUser && existingUser.id !== req.session.user.id) {
-          return res.status(400).json({ message: "Username already exists" });
-        }
+      const existingUser = await storage.getUserByUsername(username);
+      if (existingUser && existingUser.id !== req.session.user.id) {
+        return res.status(400).json({ message: "Username already exists" });
       }
 
-      const updatedUser = await storage.updateUser(req.session.user.id, { username, email });
+      const updatedUser = await storage.updateUser(req.session.user.id, { username });
       if (!updatedUser) {
         return res.status(404).json({ message: "User not found" });
       }
@@ -219,6 +213,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Current password and new password are required" });
       }
 
+      if (newPassword.length < 6) {
+        return res.status(400).json({ message: "New password must be at least 6 characters" });
+      }
+
       const user = await storage.getUser(req.session.user.id);
       if (!user) {
         return res.status(404).json({ message: "User not found" });
@@ -240,6 +238,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       res.json({ message: "Password updated successfully" });
     } catch (error) {
+      console.error("Password update error:", error);
       res.status(500).json({ message: "Failed to update password" });
     }
   });

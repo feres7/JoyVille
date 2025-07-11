@@ -16,7 +16,6 @@ import { User, Settings, Mail, Calendar, Shield } from "lucide-react";
 
 const profileUpdateSchema = z.object({
   username: z.string().min(3, "Username must be at least 3 characters"),
-  email: z.string().email("Invalid email address"),
 });
 
 const passwordUpdateSchema = z.object({
@@ -42,7 +41,6 @@ export default function Profile() {
     resolver: zodResolver(profileUpdateSchema),
     defaultValues: {
       username: user?.username || "",
-      email: "", // We'll need to get this from the server
     },
   });
 
@@ -191,12 +189,11 @@ export default function Profile() {
                   <Button 
                     onClick={() => {
                       profileForm.setValue("username", user?.username || "");
-                      profileForm.setValue("email", profile?.email || "");
                       setIsEditingProfile(true);
                     }}
                     className="w-full"
                   >
-                    Edit Profile
+                    Edit Username
                   </Button>
                 </div>
               ) : (
@@ -214,27 +211,14 @@ export default function Profile() {
                       </p>
                     )}
                   </div>
-                  <div>
-                    <Label htmlFor="email">Email</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      {...profileForm.register("email")}
-                      className="mt-1"
-                    />
-                    {profileForm.formState.errors.email && (
-                      <p className="text-sm text-red-500 mt-1">
-                        {profileForm.formState.errors.email.message}
-                      </p>
-                    )}
-                  </div>
+
                   <div className="flex gap-2">
                     <Button 
                       type="submit" 
                       disabled={profileUpdateMutation.isPending}
                       className="flex-1"
                     >
-                      {profileUpdateMutation.isPending ? "Saving..." : "Save Changes"}
+                      {profileUpdateMutation.isPending ? "Saving..." : "Save Username"}
                     </Button>
                     <Button 
                       type="button" 
