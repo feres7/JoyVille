@@ -173,7 +173,7 @@ export default function Profile() {
                   </div>
                   <div>
                     <Label className="text-sm font-medium text-gray-500">Email</Label>
-                    <p className="text-lg font-medium">{profile?.email || "Loading..."}</p>
+                    <p className="text-lg font-medium text-gray-500">{profile?.email || "Loading..."}</p>
                   </div>
                   <div>
                     <Label className="text-sm font-medium text-gray-500">Role</Label>
