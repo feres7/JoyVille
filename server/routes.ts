@@ -159,6 +159,91 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Profile routes
+  app.get("/api/auth/profile", requireCustomerAuth, async (req, res) => {
+    try {
+      const user = await storage.getUser(req.session.user.id);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      // Return user profile without password
+      const { password, ...userProfile } = user;
+      res.json(userProfile);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch profile" });
+    }
+  });
+
+  app.put("/api/auth/profile", requireCustomerAuth, async (req, res) => {
+    try {
+      const { username, email } = req.body;
+      
+      // Check if email is already taken by another user
+      if (email) {
+        const existingUser = await storage.getUserByEmail(email);
+        if (existingUser && existingUser.id !== req.session.user.id) {
+          return res.status(400).json({ message: "Email already exists" });
+        }
+      }
+
+      // Check if username is already taken by another user
+      if (username) {
+        const existingUser = await storage.getUserByUsername(username);
+        if (existingUser && existingUser.id !== req.session.user.id) {
+          return res.status(400).json({ message: "Username already exists" });
+        }
+      }
+
+      const updatedUser = await storage.updateUser(req.session.user.id, { username, email });
+      if (!updatedUser) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      // Update session with new username
+      req.session.user.username = updatedUser.username;
+      
+      // Return updated profile without password
+      const { password, ...userProfile } = updatedUser;
+      res.json(userProfile);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to update profile" });
+    }
+  });
+
+  app.put("/api/auth/password", requireCustomerAuth, async (req, res) => {
+    try {
+      const { currentPassword, newPassword } = req.body;
+      
+      if (!currentPassword || !newPassword) {
+        return res.status(400).json({ message: "Current password and new password are required" });
+      }
+
+      const user = await storage.getUser(req.session.user.id);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      // Verify current password
+      const isValidPassword = await bcrypt.compare(currentPassword, user.password);
+      if (!isValidPassword) {
+        return res.status(400).json({ message: "Current password is incorrect" });
+      }
+
+      // Hash new password
+      const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+      
+      const updatedUser = await storage.updateUser(req.session.user.id, { password: hashedNewPassword });
+      if (!updatedUser) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      res.json({ message: "Password updated successfully" });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to update password" });
+    }
+  });
+
   // Remove old admin route - redirect to login
   app.get("/api/auth/admin", (req, res) => {
     res.status(404).json({ message: "Route not found. Please use /api/auth/login instead." });

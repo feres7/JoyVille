@@ -72,9 +72,11 @@ export default function NavigationHeader() {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-48">
-                  <DropdownMenuItem>
-                    <i className="fas fa-user mr-2"></i>
-                    My Profile
+                  <DropdownMenuItem asChild>
+                    <Link href="/profile">
+                      <i className="fas fa-user mr-2"></i>
+                      My Profile
+                    </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link href="/orders">

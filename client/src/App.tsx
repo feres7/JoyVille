@@ -10,6 +10,7 @@ import Retail from "@/pages/retail";
 import Wholesale from "@/pages/wholesale";
 import Checkout from "@/pages/checkout";
 import OrdersEnhanced from "@/pages/orders-enhanced";
+import Profile from "@/pages/profile";
 import NavigationHeader from "@/components/navigation-header";
 import NotFound from "@/pages/not-found";
 
@@ -23,6 +24,7 @@ function Router() {
         <Route path="/wholesale" component={Wholesale} />
         <Route path="/checkout" component={Checkout} />
         <Route path="/orders" component={OrdersEnhanced} />
+        <Route path="/profile" component={Profile} />
         <Route path="/admin/dashboard" component={AdminDashboard} />
         <Route component={NotFound} />
       </Switch>
