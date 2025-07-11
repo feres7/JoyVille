@@ -104,13 +104,11 @@ export default function Profile() {
       });
     },
     onError: (error: any) => {
-      const errorMessage = error.message === "Current password is incorrect" 
-        ? "Current password is incorrect" 
-        : error.message || "Failed to update password";
+      console.log("Password error:", error);
       
       toast({
         title: "Error",
-        description: errorMessage,
+        description: error.message || "Failed to update password",
         variant: "destructive",
       });
     },
