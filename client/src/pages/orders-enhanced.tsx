@@ -117,13 +117,13 @@ export default function OrdersEnhanced() {
           </Card>
         ) : (
           <div className="space-y-6">
-            {orders.map((order) => (
+            {orders.map((order, index) => (
               <Card key={order.id} className="overflow-hidden">
                 <CardHeader className="bg-gray-50">
                   <div className="flex justify-between items-start">
                     <div>
                       <CardTitle className="flex items-center gap-3">
-                        <span>Order #{order.id}</span>
+                        <span>Order #{isAdmin ? order.id : index + 1}</span>
                         {isAdmin && order.user && (
                           <div className="flex items-center space-x-1 text-sm font-normal text-gray-600">
                             <User className="w-4 h-4" />

@@ -109,13 +109,13 @@ export default function Orders() {
           </Card>
         ) : (
           <div className="space-y-6">
-            {orders.map((order) => (
+            {orders.map((order, index) => (
               <Card key={order.id} className="overflow-hidden">
                 <CardHeader className="bg-gray-50">
                   <div className="flex justify-between items-start">
                     <div>
                       <CardTitle className="flex items-center gap-2">
-                        <span>Order #{order.id}</span>
+                        <span>Order #{isAdmin ? order.id : index + 1}</span>
                         <Badge className={getStatusColor(order.status)}>
                           {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
                         </Badge>
