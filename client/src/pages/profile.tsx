@@ -59,6 +59,8 @@ export default function Profile() {
     enabled: isLoggedIn,
   });
 
+
+
   // Update profile mutation
   const profileUpdateMutation = useMutation({
     mutationFn: async (data: ProfileUpdateData) => {
@@ -162,7 +164,7 @@ export default function Profile() {
                   </div>
                   <div>
                     <Label className="text-sm font-medium text-gray-500">Email</Label>
-                    <p className="text-lg font-medium">{profile?.email || "Not provided"}</p>
+                    <p className="text-lg font-medium">{profile?.email || "Loading..."}</p>
                   </div>
                   <div>
                     <Label className="text-sm font-medium text-gray-500">Role</Label>
