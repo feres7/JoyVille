@@ -60,6 +60,32 @@
   --sunny-orange: hsl(25, 95%, 61%);
 }
 
+/* Custom Scrollbar Styles */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(210, 40%, 98%);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(214.3, 31.8%, 91.4%);
+  border-radius: 10px;
+  border: 2px solid hsl(210, 40%, 98%);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(215.4, 16.3%, 46.9%);
+}
+
+/* For Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(214.3, 31.8%, 91.4%) hsl(210, 40%, 98%);
+}
+
 .dark {
   --background: hsl(222, 84%, 4.9%);
   --foreground: hsl(210, 40%, 98%);
