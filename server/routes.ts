@@ -1,7 +1,14 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertUserSchema, insertProductSchema, insertCategorySchema, insertCartItemSchema, insertOrderSchema, insertOrderItemSchema } from "@shared/schema";
+import {
+  insertUserSchema,
+  insertProductSchema,
+  insertCategorySchema,
+  insertCartItemSchema,
+  insertOrderSchema,
+  insertOrderItemSchema,
+} from "@shared/schema";
 import { z } from "zod";
 import bcrypt from "bcrypt";
 import session from "express-session";
@@ -42,30 +49,32 @@ function broadcastToClients(message: string) {
 
 export async function registerRoutes(app: Express): Promise<Server> {
   const httpServer = createServer(app);
-  
+
   // WebSocket server for real-time updates
-  const wss = new WebSocketServer({ server: httpServer, path: '/ws' });
-  
-  wss.on('connection', (ws) => {
-    console.log('WebSocket client connected');
+  const wss = new WebSocketServer({ server: httpServer, path: "/ws" });
+
+  wss.on("connection", (ws) => {
+    console.log("WebSocket client connected");
     wsConnections.add(ws);
-    
-    ws.on('close', () => {
-      console.log('WebSocket client disconnected');
+
+    ws.on("close", () => {
+      console.log("WebSocket client disconnected");
       wsConnections.delete(ws);
     });
   });
 
   // Session configuration
-  app.use(session({
-    secret: process.env.SESSION_SECRET || "joyville-secret-key",
-    resave: false,
-    saveUninitialized: true, // Allow sessions for anonymous users (cart functionality)
-    cookie: { 
-      secure: false, // Set to true in production with HTTPS
-      maxAge: 24 * 60 * 60 * 1000 // 24 hours
-    }
-  }));
+  app.use(
+    session({
+      secret: process.env.SESSION_SECRET || "joyville-secret-key",
+      resave: false,
+      saveUninitialized: true, // Allow sessions for anonymous users (cart functionality)
+      cookie: {
+        secure: false, // Set to true in production with HTTPS
+        maxAge: 24 * 60 * 60 * 1000, // 24 hours
+      },
+    }),
+  );
 
   // Initialize database with default data
   await initializeDatabase();
@@ -90,7 +99,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/auth/login", async (req, res) => {
     try {
       const { email, password } = loginSchema.parse(req.body);
-      
+
       const user = await storage.getUserByEmail(email);
       if (!user) {
         return res.status(401).json({ message: "Invalid credentials" });
@@ -101,8 +110,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(401).json({ message: "Invalid credentials" });
       }
 
-      req.session.user = { id: user.id, username: user.username, role: user.role };
-      res.json({ user: { id: user.id, username: user.username, role: user.role } });
+      req.session.user = {
+        id: user.id,
+        username: user.username,
+        role: user.role,
+      };
+      res.json({
+        user: { id: user.id, username: user.username, role: user.role },
+      });
     } catch (error) {
       res.status(400).json({ message: "Invalid request data" });
     }
@@ -111,7 +126,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/auth/register", async (req, res) => {
     try {
       const { email, username, password } = signupSchema.parse(req.body);
-      
+
       // Check if user already exists
       const existingUserByEmail = await storage.getUserByEmail(email);
       if (existingUserByEmail) {
@@ -125,18 +140,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Hash password
       const hashedPassword = await bcrypt.hash(password, 10);
-      
+
       // Create new user
       const newUser = await storage.createUser({
         email,
         username,
         password: hashedPassword,
-        role: "customer"
+        role: "customer",
       });
 
       // Set session
-      req.session.user = { id: newUser.id, username: newUser.username, role: newUser.role };
-      res.status(201).json({ user: { id: newUser.id, username: newUser.username, role: newUser.role } });
+      req.session.user = {
+        id: newUser.id,
+        username: newUser.username,
+        role: newUser.role,
+      };
+      res
+        .status(201)
+        .json({
+          user: {
+            id: newUser.id,
+            username: newUser.username,
+            role: newUser.role,
+          },
+        });
     } catch (error) {
       res.status(400).json({ message: "Invalid request data" });
     }
@@ -166,7 +193,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
-      
+
       // Return user profile without password
       const { password, ...userProfile } = user;
       res.json(userProfile);
@@ -178,7 +205,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.put("/api/auth/profile", requireCustomerAuth, async (req, res) => {
     try {
       const { username } = req.body;
-      
+
       if (!username) {
         return res.status(400).json({ message: "Username is required" });
       }
@@ -189,14 +216,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Username already exists" });
       }
 
-      const updatedUser = await storage.updateUser(req.session.user.id, { username });
+      const updatedUser = await storage.updateUser(req.session.user.id, {
+        username,
+      });
       if (!updatedUser) {
         return res.status(404).json({ message: "User not found" });
       }
 
       // Update session with new username
       req.session.user.username = updatedUser.username;
-      
+
       // Return updated profile without password
       const { password, ...userProfile } = updatedUser;
       res.json(userProfile);
@@ -208,13 +237,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.put("/api/auth/password", requireCustomerAuth, async (req, res) => {
     try {
       const { currentPassword, newPassword } = req.body;
-      
+
       if (!currentPassword || !newPassword) {
-        return res.status(400).json({ message: "Current password and new password are required" });
+        return res
+          .status(400)
+          .json({ message: "Current password and new password are required" });
       }
 
       if (newPassword.length < 6) {
-        return res.status(400).json({ message: "New password must be at least 6 characters" });
+        return res
+          .status(400)
+          .json({ message: "New password must be at least 6 characters" });
       }
 
       const user = await storage.getUser(req.session.user.id);
@@ -223,15 +256,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Verify current password
-      const isValidPassword = await bcrypt.compare(currentPassword, user.password);
+      const isValidPassword = await bcrypt.compare(
+        currentPassword,
+        user.password,
+      );
       if (!isValidPassword) {
-        return res.status(400).json({ message: "Current password is incorrect" });
+        return res
+          .status(400)
+          .json({ message: "Current password is incorrect" });
       }
 
       // Hash new password
       const hashedNewPassword = await bcrypt.hash(newPassword, 10);
-      
-      const updatedUser = await storage.updateUser(req.session.user.id, { password: hashedNewPassword });
+
+      const updatedUser = await storage.updateUser(req.session.user.id, {
+        password: hashedNewPassword,
+      });
       if (!updatedUser) {
         return res.status(404).json({ message: "User not found" });
       }
@@ -245,7 +285,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Remove old admin route - redirect to login
   app.get("/api/auth/admin", (req, res) => {
-    res.status(404).json({ message: "Route not found. Please use /api/auth/login instead." });
+    res
+      .status(404)
+      .json({
+        message: "Route not found. Please use /api/auth/login instead.",
+      });
   });
 
   // Categories routes
@@ -279,7 +323,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (search) {
         products = await storage.searchProducts(search, section);
       } else if (category) {
-        products = await storage.getProductsByCategory(parseInt(category), section);
+        products = await storage.getProductsByCategory(
+          parseInt(category),
+          section,
+        );
       } else {
         products = await storage.getProducts(section);
       }
@@ -368,7 +415,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.put("/api/cart/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
-      const { quantity } = z.object({ quantity: z.number().min(1) }).parse(req.body);
+      const { quantity } = z
+        .object({ quantity: z.number().min(1) })
+        .parse(req.body);
       const updatedItem = await storage.updateCartItem(id, quantity);
       if (!updatedItem) {
         return res.status(404).json({ message: "Cart item not found" });
@@ -407,7 +456,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const sessionId = req.sessionID;
       const userId = req.session?.user?.id;
-      
+
       if (!userId) {
         return res.status(401).json({ message: "User not authenticated" });
       }
@@ -420,7 +469,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Calculate total
       const totalAmount = cartItems.reduce((total, item) => {
-        return total + (parseFloat(item.product?.price || "0") * (item.quantity || 0));
+        return (
+          total + parseFloat(item.product?.price || "0") * (item.quantity || 0)
+        );
       }, 0);
 
       // Create order
@@ -449,11 +500,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       await storage.clearCart(sessionId);
 
       // Broadcast order update to all connected clients
-      broadcastToClients(JSON.stringify({
-        type: 'order_created',
-        order: newOrder,
-        userId: userId
-      }));
+      broadcastToClients(
+        JSON.stringify({
+          type: "order_created",
+          order: newOrder,
+          userId: userId,
+        }),
+      );
 
       res.status(201).json(newOrder);
     } catch (error) {
@@ -466,12 +519,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = req.session?.user?.id;
       const userRole = req.session?.user?.role;
-      
+
       // Admins see all orders, customers see only their own
-      const orders = userRole === "superadmin" 
-        ? await storage.getOrders()
-        : await storage.getOrdersByUser(userId!);
-      
+      const orders =
+        userRole === "superadmin"
+          ? await storage.getOrders()
+          : await storage.getOrdersByUser(userId!);
+
       res.json(orders);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch orders" });
@@ -495,35 +549,50 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const id = parseInt(req.params.id);
       const { status } = req.body;
-      
+
       console.log(`Updating order ${id} status to ${status}`);
       console.log(`Request body:`, req.body);
       console.log(`User session:`, req.session?.user);
-      
-      if (!status || !["pending", "confirmed", "shipped", "delivered", "cancelled"].includes(status)) {
+
+      if (
+        !status ||
+        !["pending", "confirmed", "shipped", "delivered", "cancelled"].includes(
+          status,
+        )
+      ) {
         console.error(`Invalid status provided: ${status}`);
         return res.status(400).json({ message: "Invalid status" });
       }
-      
+
       const updatedOrder = await storage.updateOrderStatus(id, status);
       if (!updatedOrder) {
         console.error(`Order not found: ${id}`);
         return res.status(404).json({ message: "Order not found" });
       }
-      
+
       console.log(`Order ${id} status updated successfully to ${status}`);
-      
+
       // Broadcast status update to all connected clients
-      broadcastToClients(JSON.stringify({
-        type: 'order_status_updated',
-        order: updatedOrder
-      }));
-      
+      broadcastToClients(
+        JSON.stringify({
+          type: "order_status_updated",
+          order: updatedOrder,
+        }),
+      );
+
       res.json(updatedOrder);
     } catch (error) {
       console.error("Error updating order status:", error);
-      console.error("Error stack:", error instanceof Error ? error.stack : error);
-      res.status(500).json({ message: "Failed to update order status", error: error instanceof Error ? error.message : String(error) });
+      console.error(
+        "Error stack:",
+        error instanceof Error ? error.stack : error,
+      );
+      res
+        .status(500)
+        .json({
+          message: "Failed to update order status",
+          error: error instanceof Error ? error.message : String(error),
+        });
     }
   });
 
@@ -558,12 +627,42 @@ async function initializeDatabase() {
     const existingCategories = await storage.getCategories();
     if (existingCategories.length === 0) {
       const defaultCategories = [
-        { name: "Plush Toys", description: "Soft and cuddly companions", icon: "fas fa-baby", color: "mint" },
-        { name: "Building Blocks", description: "Creative construction sets", icon: "fas fa-cubes", color: "sky" },
-        { name: "Dolls", description: "Imaginative play companions", icon: "fas fa-female", color: "sunny" },
-        { name: "Educational", description: "Learning through play", icon: "fas fa-graduation-cap", color: "lavender" },
-        { name: "Vehicles", description: "Cars, trucks, and more", icon: "fas fa-car", color: "coral" },
-        { name: "Puzzles", description: "Brain-teasing challenges", icon: "fas fa-puzzle-piece", color: "turquoise" },
+        {
+          name: "Plush Toys",
+          description: "Soft and cuddly companions",
+          icon: "fas fa-baby",
+          color: "mint",
+        },
+        {
+          name: "Building Blocks",
+          description: "Creative construction sets",
+          icon: "fas fa-cubes",
+          color: "sky",
+        },
+        {
+          name: "Dolls",
+          description: "Imaginative play companions",
+          icon: "fas fa-female",
+          color: "sunny",
+        },
+        {
+          name: "Educational",
+          description: "Learning through play",
+          icon: "fas fa-graduation-cap",
+          color: "lavender",
+        },
+        {
+          name: "Vehicles",
+          description: "Cars, trucks, and more",
+          icon: "fas fa-car",
+          color: "coral",
+        },
+        {
+          name: "Puzzles",
+          description: "Brain-teasing challenges",
+          icon: "fas fa-puzzle-piece",
+          color: "turquoise",
+        },
       ];
 
       for (const category of defaultCategories) {
