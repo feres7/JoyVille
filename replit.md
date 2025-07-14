@@ -61,6 +61,7 @@ The application follows a modern full-stack architecture:
 
 ## Changelog
 
+- July 14, 2025. Successfully migrated from Replit Agent to standard Replit environment with PostgreSQL database, added sample products for all categories in both retail and wholesale sections, created customer accounts for testing (username: testcustomer, password: password123)
 - July 11, 2025. Successfully migrated from Replit Agent to standard Replit environment with PostgreSQL database, added sample products for all categories in both retail and wholesale sections, created customer accounts for testing
 - July 08, 2025. Migrated from Replit Agent to standard Replit environment, added authentication requirement for checkout with user-order association, added sample products and user data
 - July 05, 2025. Added comprehensive checkout system with customer address forms
