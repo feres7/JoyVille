@@ -62,28 +62,52 @@
 
 /* Custom Scrollbar Styles */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: hsl(210, 40%, 98%);
+  background: transparent;
   border-radius: 10px;
+  margin: 8px 0;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: hsl(214.3, 31.8%, 91.4%);
+  background: hsl(214.3, 31.8%, 85%);
   border-radius: 10px;
-  border: 2px solid hsl(210, 40%, 98%);
+  border: 1px solid transparent;
+  background-clip: padding-box;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: hsl(215.4, 16.3%, 46.9%);
+  background: hsl(215.4, 16.3%, 70%);
+}
+
+/* Specific styling for dialog scrollbars */
+.dialog-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.dialog-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 10px;
+  margin: 12px 4px;
+}
+
+.dialog-scrollbar::-webkit-scrollbar-thumb {
+  background: hsl(214.3, 31.8%, 85%);
+  border-radius: 10px;
+  border: 1px solid transparent;
+  background-clip: padding-box;
+}
+
+.dialog-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: hsl(215.4, 16.3%, 70%);
 }
 
 /* For Firefox */
 * {
   scrollbar-width: thin;
-  scrollbar-color: hsl(214.3, 31.8%, 91.4%) hsl(210, 40%, 98%);
+  scrollbar-color: hsl(214.3, 31.8%, 85%) transparent;
 }
 
 .dark {
