@@ -171,23 +171,30 @@ export default function Orders() {
                     </div>
                   </div>
 
-                  {/* Billing Address (if different) */}
-                  {order.billingAddress && (
-                    <>
-                      <Separator className="my-4" />
-                      <div>
-                        <h4 className="font-semibold mb-3 flex items-center gap-2">
-                          <MapPin className="w-4 h-4" />
-                          Billing Address
-                        </h4>
-                        <div className="text-sm">
+                  {/* Billing Address */}
+                  <Separator className="my-4" />
+                  <div>
+                    <h4 className="font-semibold mb-3 flex items-center gap-2">
+                      <MapPin className="w-4 h-4" />
+                      Billing Address
+                    </h4>
+                    <div className="text-sm">
+                      {order.billingAddress ? (
+                        <>
                           <p>{order.billingAddress}</p>
                           <p>{order.billingCity}, {order.billingState} {order.billingZipCode}</p>
                           <p>{order.billingCountry}</p>
-                        </div>
-                      </div>
-                    </>
-                  )}
+                        </>
+                      ) : (
+                        <>
+                          <p>{order.shippingAddress}</p>
+                          <p>{order.shippingCity}, {order.shippingState} {order.shippingZipCode}</p>
+                          <p>{order.shippingCountry}</p>
+                          <p className="text-gray-500 italic mt-1">Same as shipping address</p>
+                        </>
+                      )}
+                    </div>
+                  </div>
 
                   {/* Order Items */}
                   <Separator className="my-4" />

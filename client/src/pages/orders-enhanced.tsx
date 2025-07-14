@@ -252,6 +252,30 @@ export default function OrdersEnhanced() {
                     </div>
                   </div>
 
+                  {/* Billing Address */}
+                  <div className="mt-6">
+                    <h4 className="font-semibold mb-3 flex items-center gap-2">
+                      <MapPin className="w-5 h-5 text-gray-600" />
+                      Billing Address
+                    </h4>
+                    <div className="space-y-1 text-sm">
+                      {order.billingAddress ? (
+                        <>
+                          <p>{order.billingAddress}</p>
+                          <p>{order.billingCity}, {order.billingState} {order.billingZipCode}</p>
+                          <p>{order.billingCountry}</p>
+                        </>
+                      ) : (
+                        <>
+                          <p>{order.shippingAddress}</p>
+                          <p>{order.shippingCity}, {order.shippingState} {order.shippingZipCode}</p>
+                          <p>{order.shippingCountry}</p>
+                          <p className="text-gray-500 italic mt-1">Same as shipping address</p>
+                        </>
+                      )}
+                    </div>
+                  </div>
+
                   {order.orderNotes && (
                     <div className="mt-6">
                       <h4 className="font-semibold mb-2">Order Notes</h4>

@@ -289,11 +289,11 @@ export default function Checkout() {
                               <span className="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border border-r-0 border-gray-300 rounded-l-md">
                                 +216
                               </span>
-                              <Input 
-                                placeholder="12345678" 
-                                className="rounded-l-none" 
+                              <Input
+                                placeholder="12345678"
+                                className="rounded-l-none"
                                 maxLength={8}
-                                {...field} 
+                                {...field}
                               />
                             </div>
                           </FormControl>
@@ -320,7 +320,7 @@ export default function Checkout() {
                         <FormItem>
                           <FormLabel>Street Address</FormLabel>
                           <FormControl>
-                            <Input placeholder="123 Main Street" {...field} />
+                            <Input placeholder="Street Name" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -334,7 +334,7 @@ export default function Checkout() {
                           <FormItem>
                             <FormLabel>City</FormLabel>
                             <FormControl>
-                              <Input placeholder="New York" {...field} />
+                              <Input placeholder="Nabeul" {...field} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -347,7 +347,7 @@ export default function Checkout() {
                           <FormItem>
                             <FormLabel>State/Province</FormLabel>
                             <FormControl>
-                              <Input placeholder="NY" {...field} />
+                              <Input placeholder="" {...field} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -362,11 +362,11 @@ export default function Checkout() {
                           <FormItem>
                             <FormLabel>Country</FormLabel>
                             <FormControl>
-                              <Input 
-                                value="Tunisia" 
-                                readOnly 
+                              <Input
+                                value="Tunisia"
+                                readOnly
                                 className="bg-gray-50 cursor-not-allowed"
-                                {...field} 
+                                {...field}
                               />
                             </FormControl>
                             <FormMessage />
@@ -380,7 +380,7 @@ export default function Checkout() {
                           <FormItem>
                             <FormLabel>ZIP/Postal Code</FormLabel>
                             <FormControl>
-                              <Input placeholder="10001" {...field} />
+                              <Input placeholder="8000" {...field} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -427,7 +427,7 @@ export default function Checkout() {
                               <FormLabel>Street Address</FormLabel>
                               <FormControl>
                                 <Input
-                                  placeholder="123 Billing Street"
+                                  placeholder="Billing Street Name"
                                   {...field}
                                 />
                               </FormControl>
@@ -443,7 +443,7 @@ export default function Checkout() {
                               <FormItem>
                                 <FormLabel>City</FormLabel>
                                 <FormControl>
-                                  <Input placeholder="New York" {...field} />
+                                  <Input placeholder="Nabeul" {...field} />
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
@@ -456,7 +456,7 @@ export default function Checkout() {
                               <FormItem>
                                 <FormLabel>State/Province</FormLabel>
                                 <FormControl>
-                                  <Input placeholder="NY" {...field} />
+                                  <Input placeholder="" {...field} />
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
@@ -489,7 +489,7 @@ export default function Checkout() {
                               <FormItem>
                                 <FormLabel>ZIP/Postal Code</FormLabel>
                                 <FormControl>
-                                  <Input placeholder="10001" {...field} />
+                                  <Input placeholder="8000" {...field} />
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
